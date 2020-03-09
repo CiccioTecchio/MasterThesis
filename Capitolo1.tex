@@ -1,22 +1,42 @@
-\section{Example}
-example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example exampleexample example example\newline
-example example example example example example example example example\newline example example example example example exampleexample example example\newline
-example example example example example example example example example\newline example example example example example exampleexample example example\newline
-example example example example example example example example example\newline
-example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline
-\section{Example 2}
-example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline
-example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline example example example example example example example example example\newline
-example example example example example exampleexample example example\newline example example example example example example example example example\newline
-example example example example example example example example example\newline
+\section{Contesto}
+Da una decina d'anni a questa parte gli OSN sono sempre più presenti nella vita di milioni di persone, siamo arrivati al punto che una singola persona possiede anche più tipi di social network e su ognuno di questi pubblica dei contenuti diversi. Questo fa si che su queste piattaforme viaggi una enorme mole di informazioni che potevano essere rivenduta dai proprietari degli OSN al miglior offerente come ad esempio è accaduto nello scandalo Cambrige Analytica.\footnote{\url{https://en.wikipedia.org/wiki/Facebook-Cambridge_Analytica_data_scandal}}\newline
+Al fine di tutelare i dati che gli utenti condividono con il loro passaggio online il 25 maggio del 2018 è entrata in vigore la normativa europea sulla protezione dei dati personali meglio nota come regolamento GDPR.\footnote{\url{https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679&from=EN\#d1e40-1-1}}
+Questa normativa limita il commercio dei dati ma di certo non impedisce agli utenti di pubblicare su un OSN informazioni sensibili in maniera volontaria o involontaria su se stesso o, peggio ancora, su altri. A tal proposito Mao et al. \cite{looseTweets} hanno condotto uno studio quantitativo su Twitter, lo studio ha rivelato che nei tweet sono presenti molti dati personali non solo riguardanti l'autore del tweet ma anche di terzi. In seguito Aylin et al.\cite{privacyDetective} hanno cercato di capire quanto siano sensibili le informazioni contenute nei tweet attribuendo a questi un \textbf{privacy score}, esso poteva essere di tre tipi:
+\begin{enumerate}
+    \item il tweet non contiene informazioni private
+    \item il tweet può contenere informazioni private
+    \item il tweet contiene informazioni private
+\end{enumerate}
+Questo studio si è concluso con il 10.37\% dei tweet collezionati ha un privacy score di tipo 1, il 21.11\% di tipo e il restante 68.52\% è di tipo 3.
+Infine Qiaozhi et al. \cite{dontTweetThis} hanno cercato di fornire un' ulteriore misura della sensibilità presente nei vari tweet raccolti, le misure che hanno fornito sono i \textbf{privscore} essi si dividono in tre categorie
+\begin{enumerate}
+    \item liberi da contesto, un tweet che contiene un dato sensibile
+    \item consapevoli del contesto, a seconda del contesto scritto nel tweet un dato può essere sensibile o meno
+    \item personalizzati, a seconda della cronologia dei tweet fatti da un utente un dato può essere sensibile o meno
+\end{enumerate}
+
+\section{Cos'è Knoxly}
+Knoxly (Figura 3.1) si prefigge come obiettivo quello di aiutare gli utenti ad avere una maggiore consapevolezza
+dei dati che pubblicano/condividono sul Web , dato che il principale rischio per la privacy online è la divulgazione di
+informazioni personali e sensibili degli stessi utenti.\newline
+%aggiungere dalla Tesi di Rosaria
+
+\section{Obiettivi del lavoro}
+Questo lavoro si prefigge l'obiettivo di aggiungere a Knoxly una intelligenza artificiale(IA) in grado di poter riconoscere un dato sensibile, di segnalare all'utente la presenza di questo dato e di dare la possibilità all'utente di inviare un feedback all'IA in modo tale che essa possa imparare a riconoscere quali sono i dati sensibili secondo l'utente che sta utilizzando il plugin.
+\subsection{I dati sensibili}
+Secondo la normativa GDPR attualmente in vigore per dati sensibili si intendono i dati che rivelino:
+\begin{itemize}
+    \item l'etnia, pensiero politico, religioso o filosofico
+    \item se si è membri di un sindacato
+    \item dati genetici o biomedici che permettano l'identificazione univoca di un essere umano
+    \item dati relativi alla salute
+    \item orientamento sessuale e vita sessuale
+\end{itemize}
+Abbiamo scelto di utilizzare un sottoinsieme di temi di partenza per dare una conoscenza di base all'IA di Knoxly. L'IA inizialmente sarà in grado di individuare dati sensibili riguardo i seguenti topic
+\begin{enumerate}
+    \item orientamento politico
+    \item salute
+    \item lavoro
+    \item viaggi
+\end{enumerate}
+Questi temi sono stati scelti per due motivi, il primo è che molti di questi temi fanno parte della normativa GDPR quindi è una legge a dirci che i dati appartenenti a quelle categorie sono sensibili e il secondo è che molti dei temi che verranno trattati sono già stati utilizzati negli studi sopracitati ma anche in altri studi riguardanti la privacy detection e il privacy leaking.

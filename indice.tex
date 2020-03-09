@@ -10,6 +10,14 @@
 \usepackage{url}
 \usepackage{listings}
 \usepackage{comment}
+\usepackage{hyperref}
+%rimuove bordi dai link
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -30,7 +38,9 @@
 \usepackage{titlesec}
 
 \titleformat{\chapter}{\normalfont\huge\bf}{\thechapter.}{20pt}{\huge\bf}
-\titleformat{\section}{\normalfont}{\thesection.}{16pt}{\normalfont}
+\titleformat{\section}{\normalfont}{\thesection.}{18pt}{\normalfont\bf}
+\titleformat{\subsection}{\normalfont}{\thesubsection.}{16pt}{\normalfont\bf}
+
 
 
 \begin{document}
@@ -70,7 +80,7 @@
 
 \newpage
 	
-
+\newcommand{\quotes}[1]{``#1''}
 \tableofcontents
 \listoffigures %elenco figure
 \listoftables %elenco tabelle
@@ -88,17 +98,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Titolo capitolo}
+\chapter{Introduzione}
 \setcounter{page}{1} 		
 \pagenumbering{arabic}
 \input{Capitolo1.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Titolo capitolo}
+\chapter{I dati}
 \input{Capitolo2.tex}
 
-\chapter{Titolo capitolo}
-\input{Capitolo3.tex}
+%\chapter{Titolo capitolo}
+%\input{Capitolo3.tex}
 
 \input{Bibliografia.tex}
 

@@ -1,0 +1,23 @@
+Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati. Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset.
+Per ogni topic scelto sono stati presi dei dataset da kaggle, i dataset sceglit per ogni topic sono i seguenti:
+\begin{enumerate}
+    \item politica \href{https://www.kaggle.com/kinguistics/election-day-tweets#election_day_tweets.csv}{tweet prodotti durante le elezioni politiche americane}
+    \item salute \href{https://www.kaggle.com/tboyle10/medicaltranscriptions}{medical transcript} e \href{https://www.kaggle.com/paultimothymooney/medical-speech-transcription-and-intent#overview-of-recordings.csv}{medical speech}
+    \item lavoro \href{https://www.kaggle.com/atahmasb/amazon-job-skills}{offerte di lavoro Amazon}
+    \item viaggi \href{https://www.kaggle.com/crowdflower/twitter-airline-sentiment#Tweets.csv}{tweet US Airlines}
+\end{enumerate}
+\section{Pulizia dei dati}
+I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
+Come prima cosa dai dataset scaricati sono state escluse le colonne che non erano rilevanti per la costruzione del nostro dataset ad esempio dai dataset che contenevano tweet è stata selezionata solo la colonna che contiene il testo del tweet escludendo tutte le altre colonne che contenevano altre informazioni relative al tweet quali id, autore ecc...\newline
+Una volta selezionate le colonne sono stati eliminate da queste le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata possibile grazie alla libreria Python  \href{https://textblob.readthedocs.io/en/dev/}{TextBlob}.\newline
+Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset che sono stati manipolati sono pronti per essere etichettati ed uniti. 
+\section{Labeling}
+La fase di labeling è l'ultimo step prima di ottenere il dataset finale, a seconda del topic trattato nel dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica il topic che viene trattato da quel testo. Numeri utilizzati
+\begin{enumerate}
+    \setcounter{enumi}{-1}
+    \item politica
+    \item salute
+    \item lavoro
+    \item viaggi
+\end{enumerate}
+Una volta completato il labeling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verrà selezionato un campione di 1000 righe per ogni topic al fine di creare un dataset fruibile per un classificatore.
