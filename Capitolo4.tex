@@ -1,0 +1,144 @@
+Per blabla è stata progettata una metodologia che si suddivide nelle seguenti fasi:
+\begin{itemize}
+    \item Data collection:
+    \item Text classification:
+        \begin{itemize}
+            \item 
+        \end{itemize}
+    \item Sensitivity classification:
+        \begin{itemize}
+            \item 
+        \end{itemize}
+\end{itemize}
+\section{Creazione del dataset}
+Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati. Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset.
+Per ogni topic scelto sono stati presi dei dataset da kaggle, i dataset sceltisono i seguenti:
+\begin{enumerate}
+    \item politica \href{https://www.kaggle.com/kinguistics/election-day-tweets#election_day_tweets.csv}{tweet prodotti durante le elezioni politiche americane}
+    \item salute \href{https://www.kaggle.com/tboyle10/medicaltranscriptions}{medical transcript} e \href{https://www.kaggle.com/paultimothymooney/medical-speech-transcription-and-intent#overview-of-recordings.csv}{medical speech}
+    \item lavoro \href{https://www.kaggle.com/atahmasb/amazon-job-skills}{offerte di lavoro Amazon}
+    \item viaggi \href{https://www.kaggle.com/crowdflower/twitter-airline-sentiment#Tweets.csv}{tweet US Airlines}
+    \item generale \href{https://www.kaggle.com/rounakbanik/the-movies-dataset#movies_metadata.csv}{trame di film}
+\end{enumerate}
+Si è deciso di introdurre un topic che chiameremo \quotes{generale} questo topic ci servirà per aumentare l'eterogeneità dei dati, sono state scelte le trame dei film perchè queste sono brevi e raccontano una storia e spesso anche dei dettagli che sensibili riguardo i personaggi.
+\section{Pulizia dei dati}
+I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
+Come prima cosa dai dataset scaricati sono state escluse le colonne che non erano rilevanti per la costruzione del nostro dataset ad esempio dai dataset che contenevano tweet è stata selezionata solo la colonna che contiene il testo del tweet escludendo tutte le altre colonne che contenevano altre informazioni relative al tweet quali id, autore ecc...\newline
+Una volta selezionate le colonne sono stati eliminate da queste le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata possibile grazie alla libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
+Si è notato che in dati appartenenti alla categoria lavoro risultano essere molto grandi, questo è un problema perchè potrebbe generare un numero molto alto di falsi positivi durante la fase di labeling. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}} \newline
+Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset che sono stati manipolati sono pronti per essere etichettati ed uniti. 
+\section{Labeling}
+La fase di labeling è l'ultimo step prima di ottenere il dataset finale, a seconda del topic trattato nel dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica il topic che viene trattato da quel testo. Numeri utilizzati
+\begin{enumerate}
+    \setcounter{enumi}{-1}
+    \item politica
+    \item salute
+    \item lavoro
+    \item viaggi
+    \item generale
+\end{enumerate}
+Una volta completato il labeling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verranno selezionati tre campioni uno da 200(\textit{ds200.csv)}, uno da 1000(\textit{ds1000.csv}) e un altro da 10.000 entry per ogni topic(\textit{ds10000.csv}).\newline
+I dataset da 1000 e da 10.000 andranno in input ad un primo classificatore(il funzionamento di questo classificatore va spiegato in seguito) mentre il dataset da 200 entry per topic sarà sottoposto ad una seconda fase di labeling.
+
+\section{Il classificatore}
+Il classificatore\footnote{\url{https://github.com/CiccioTecchio/IA-Knoxly/blob/master/src/modello.py}} ha lo scopo di individuare il topic di appartenenza di una frase.\newline
+Viene implementato utilizzando il metodo \textbf{Random Forest\footnote{\url{https://en.wikipedia.org/wiki/Random_forest}}}, 
+esso prende in input ds1000.csv, utilizza USE per ottenere l'embed di ogni singola entry del dataset, dopodichè, la lista degli embed e la lista dei topic a cui appertiene ogni embed vengono date in input al classificatore. Esso dividerà il dataset in due parti una prima parte, l'80\%, utilizzata per l'addestramento(training set) il restante 20\% verrà utilizzato per effettuare le predizioni(test set).\newline
+La tabella seguente riporta le performance ottenute da questo classificatore al termine della prima fase
+\begin{table}[h]
+\begin{tabular}{|l|l|c|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & \multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
+ &  & Politics & Health & Job & Travel & General \\ \hline
+\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.972} \\ \cline{2-7} 
+ & Precision & 0.994 & 0.985 & 0.989 & 0.912 & 0.985 \\ \cline{2-7} 
+ & Recall & 0.91 & 0.985 & 0.97  & 0.995 & 1 \\ \cline{2-7} 
+ & Fscore & 0.95 & 0.985 & 0.979 & 0.952 & 0.992 \\ \hline
+\end{tabular}
+\caption{misure training ds1000.csv}
+\end{table}
+\FloatBarrier
+commento delle misure.\newline
+Nella seconda fase viene effettuato il \quotes{testing into the wild} dove la predizione del topic di appartenza dell'embed di una frase viene fatta su un dataset molto più grande nel nostro caso \textit{ds10000.csv}.\newline
+La tabella seguente riporta le misure ottenute dalla seconda fase. 
+\begin{table}[h]
+\begin{tabular}{|l|l|c|c|c|c|c|}
+\hline
+\multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & \multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
+ &  & Politics & Health & Job & Travel & General \\ \hline
+\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.970} \\ \cline{2-7} 
+ & Precision & 0.983 & 0.986 & 0.978 & 0.916 & 0.99 \\ \cline{2-7} 
+ & Recall & 0.914 & 0.989 & 0.972 & 0.986 & 0.987 \\ \cline{2-7} 
+ & Fscore & 0.947 & 0.987 & 0.975 & 0.95 & 0.988 \\ \hline
+\end{tabular}
+\caption{misure validation ds10.000.csv}
+\end{table}
+\FloatBarrier
+commento delle misure.\newline
+
+\section{Labeling sensisbilità}
+In questa fase a ds200.csv è stata aggiunta una terza colonna denominata \quotes{sensibile}, nella quale verrà scritto \textbf{1} se la riga contiene un dato sensibile 0 altrimenti.\newline
+Prima di etichettare le entry sensibili, determinare al meglio quando un dato è sensibile o meno ci siamo rifatti allo studio di Rumbald et al.\cite{dataSpectrum}
+
+\subsection{Tabella delle sensibilità}
+In accordo allo studio fatto da Rumbal sono state identficate le seguenti regole
+\FloatBarrier
+\begin{table}[h]
+\begin{tabular}{|l|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Regole}} & \textbf{Sensibile} \\ \hline
+Dati relativi ad oggetti & No \\ \hline
+Dati anonimizzati relativi a persone & No \\ \hline
+Dati relativi ad interazioni uomo-macchina & No \\ \hline
+Dati relativi a posizione di uomini & \textbf{Sì} \\ \hline
+Dati relativi ad abitudini di acquisto & No \\ \hline
+Dati relativi allo stipendio & \textbf{Sì} \\ \hline
+Dati relativi al lavoro svolto & \textbf{Sì} \\ \hline
+Dati relativi alla propria classe sociale & \textbf{Sì} \\ \hline
+Indirizzo o luogo & \textbf{Sì} \\ \hline
+Chiara opinione religiosa o politica & \textbf{Sì} \\ \hline
+Altri tipi di opinioni & No \\ \hline
+Dati sul lifestyle & \textbf{Sì} \\ \hline
+Orientamento sessuale & \textbf{Sì} \\ \hline
+Sesso in generale & No \\ \hline
+Dati relativi alla gravidanza & \textbf{Sì} \\ \hline
+Dati relativi al gruppo etnico & \textbf{Sì} \\ \hline
+Dati medici o stato di salute & \textbf{Sì} \\ \hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+descrizione dettagliata delle regole?\newline
+\subsection{Fase di labeling}
+Una volta dettate le regole per il labeling si è proceduto ad etichettare manualmente ogni singola entry come sensibile(1) o non sensibile(0).\newline
+%Dopo una prima etichettatura abbiamo ottenuto il seguente numero di topic sensibili per categoria\newline
+\begin{table}[t]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Topic} & \textbf{\# entry} & \textbf{\# entry sensibili} \\ \hline
+Politics & 200 & 40 \\ \hline
+Health & 200 & 100 \\ \hline
+Job & 200 & 21 \\ \hline
+Travel & 200 & 28 \\ \hline
+General & 200 & 71 \\ \hline
+Totale & 1000 & 260 \\ \hline
+\end{tabular}
+\caption{numero entry sensibili per categoria}
+\end{table}
+\FloatBarrier
+Si è osservato che il dataset risulta molto sbilanciato, in particolare nel topic health i tipi di interventi che ricorrono spesso sono quelli alla prostata e all'ernia, mentre nel topic job si fa riferimento a figure lavorative solo nel campo IT. Il topic più sorprendente è stato il topic General dato che i dati sensibili appartenenti ad esso fanno parte delle categorie più disparate.\newline
+Per bilanciare il dataset sono state rimosse entry sensibili dai topic che ne avevano in abbondanza ed aggiungete nuove entry sensibili nei topic dove ne erano presenti di meno. Le nuove entry da aggiungere sono state selezionate manualmente da ds1000.csv, mentre le entry da rimuovere sono state quelle che trattavano argomenti ripetuti molte volte all'interno del topic.\newline
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Topic} & \textbf{\# entry} & \textbf{\# entry sensibili} \\ \hline
+Politics & 200 & 40 \\ \hline
+Health & 200 & 102 \\ \hline
+Job & 200 & 21 \\ \hline
+Travel & 200 & 28 \\ \hline
+General & 200 & 71 \\ \hline
+Totale & 1000 & 262 \\ \hline
+\end{tabular}
+\caption{numero entry sensibili dopo il bilanciamento}
+\end{table}
