@@ -1,29 +1,32 @@
-Qui ci va intro sul machine learning, spiegazione ad alto livello degli algoritmi usati (Random Forest, Rete Neurale, SVM), spiegazione delle metriche (accuracy, precision, recall, fscore) utilizzate e intro e spiegazione di USE.\newline
-Ci va anche Knoxly con i suoi limiti.
+Per problemi di classificazione o di previsione vengono utilizzati diversi modelli di machine learning. In questa capitolo verranno descritti brevemete i metodi che verranno utilizzati.
+\section{Modelli utilizzati}
+\subsection{Random Forest}
+Il Random Forest(RF) è un algoritmo di supervised classification che consiste in un insieme di metodi basati sul bagging\cite{Random Forest}; è stata usata l'implementazione di \textit{scikit-learn} combina gli alberi facendo la media della loro previsione probabilistica invece di lasciare che ogni albero voti per una singola classe, e supporta intrinsecamente problemi multi-classe.
 
-%\begin{table}[h]
-%\begin{tabular}{|l|l|c|c|c|c|c|}
-%\hline
-%\multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & %\multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
-% &  & Politics & Health & Job & Travel & General \\ \hline
-%\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.972} \\ \cline{2-7} 
-% & Precision & 0.994 & 0.985 & 0.989 & 0.912 & 0.985 \\ \cline{2-7} 
-% & Recall & 0.91 & 0.985 & 0.97  & 0.995 & 1 \\ \cline{2-7} 
-% & Fscore & 0.95 & 0.985 & 0.979 & 0.952 & 0.992 \\ \hline
-%\end{tabular}
-%\caption{misure training ds1000.csv}
-%\end{table}
+Esistono diverse metriche per valutare i punteggi dei modelli di machine learning. In questo lavoro sono state utilizzate le seguenti metriche:
 
+\begin{enumerate}
+    \item \textbf{accuracy}: frazione delle predizioni corretta fatte dal nostro modello, essa è definita come segue
+    \begin{equation*} accuracy = \dfrac {(tp + tn)}{(tp + tn + fp + fn)}\end{equation*} 
+    dove $tp$, $fn$, $fp$ e $tn$ sono rispettivamente il numero di veri positivi, falsi negativi, falsi positivi, veri negativi
+    
+    \item \textbf{precision}: capacità del classificatore di non etichettare come positivo un campione che è negativo, definita come segue
+    \begin{equation*} precision = \dfrac {tp}{(tp + fp)}\end{equation*} 
+    dove $tp$ rappresenta il numero di veri positivi e $fp$ il numero di falsi positivi
+    
+    \item \textbf{recall}: capacità di un classificatore di trovare tutti i campioni positivi; definita come
+    \begin{equation*} recall = \dfrac {tp}{(tp + fn)}\end{equation*} 
+    dove $tp$ rappresenta il numero di veri positivi e $fn$ il numero di falsi negativi
+    
+\end{enumerate}{}
 
-%\begin{table}[h]
-%\begin{tabular}{|l|l|c|c|c|c|c|}
-%\hline
-%\multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & \multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
-% &  & Politics & Health & Job & Travel & General \\ \hline
-%\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.970} \\ \cline{2-7} 
-% & Precision & 0.983 & 0.986 & 0.978 & 0.916 & 0.99 \\ \cline{2-7} 
-% & Recall & 0.914 & 0.989 & 0.972 & 0.986 & 0.987 \\ \cline{2-7} 
-% & Fscore & 0.947 & 0.987 & 0.975 & 0.95 & 0.988 \\ \hline
-%\end{tabular}
-%\caption{misure validation ds10.000.csv}
-%\end{table}
+\section{Universal Sentence Encoder}
+Universal Sentence Encoder(USE) è un encoder che trasforma del testo scritto in linguaggio naturale in un vettore di grandi dimensioni, questo encoder può essere usato per task di text classification, semantic similarity, clustering e altri task riguardanti l'ambito dell'analisi del testo scritto in linguaggio naturale.\newline
+Nel seguente esempio viene mostrato il funzionamento di USE, egli prende in input un testo scritto in linguaggio naturale, codifica la frase in un array di 512 numeri reali, infine è stata misurata la similarità semantica delle frasi codificate.
+\begin{figure}[h]
+    \centering
+    \includegraphics [scale=0.42]{Figure/use.png}
+    \caption{Esempio funzionamento USE}
+    \label{fig:my_label}
+\end{figure}
+USE ha vari tipo di encoder, quello utilizzato in questo lavoro è un encoder multilingua che supporta 16 lingue diverse(arabo, cinese-semplificato, cinese-tradizionale, francese, inglese, italiano, giapponese, coreano, olandese, polacco, portoghese, spagnolo, tailandese, turco, russo, tedesco).

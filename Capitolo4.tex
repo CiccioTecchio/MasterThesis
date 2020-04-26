@@ -10,37 +10,87 @@ Per blabla è stata progettata una metodologia che si suddivide nelle seguenti f
             \item 
         \end{itemize}
 \end{itemize}
-\section{Creazione del dataset}
-Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati. Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset.
+\section{Raw Data}
+Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati). Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset.
 Per ogni topic scelto sono stati presi dei dataset da kaggle, i dataset sceltisono i seguenti:
-\begin{enumerate}
-    \item politica \href{https://www.kaggle.com/kinguistics/election-day-tweets#election_day_tweets.csv}{tweet prodotti durante le elezioni politiche americane}
-    \item salute \href{https://www.kaggle.com/tboyle10/medicaltranscriptions}{medical transcript} e \href{https://www.kaggle.com/paultimothymooney/medical-speech-transcription-and-intent#overview-of-recordings.csv}{medical speech}
-    \item lavoro \href{https://www.kaggle.com/atahmasb/amazon-job-skills}{offerte di lavoro Amazon}
-    \item viaggi \href{https://www.kaggle.com/crowdflower/twitter-airline-sentiment#Tweets.csv}{tweet US Airlines}
-    \item generale \href{https://www.kaggle.com/rounakbanik/the-movies-dataset#movies_metadata.csv}{trame di film}
-\end{enumerate}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Topic} & \textbf{link} & \textbf{num. elementi} \\ \hline
+Politics & Election Day Tweets & 393.764 \\ \hline
+Health & Medical Transcriptions & 2.348 \\ \hline
+Health & Medical Speech, Transcription, and Intent & 706 \\ \hline
+Job & AMAZON Job Skills & 2.505 \\ \hline
+Travel & Twitter US Airline Sentiment & 14.427 \\ \hline
+General & The Movies Dataset & 44.306 \\ \hline
+\end{tabular}
+\end{table}
 Si è deciso di introdurre un topic che chiameremo \quotes{generale} questo topic ci servirà per aumentare l'eterogeneità dei dati, sono state scelte le trame dei film perchè queste sono brevi e raccontano una storia e spesso anche dei dettagli che sensibili riguardo i personaggi.
-\section{Pulizia dei dati}
+
+\section{Preprocessing sui raw data}
+\label{sec:preprocessingraw}
 I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
 Come prima cosa dai dataset scaricati sono state escluse le colonne che non erano rilevanti per la costruzione del nostro dataset ad esempio dai dataset che contenevano tweet è stata selezionata solo la colonna che contiene il testo del tweet escludendo tutte le altre colonne che contenevano altre informazioni relative al tweet quali id, autore ecc...\newline
 Una volta selezionate le colonne sono stati eliminate da queste le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata possibile grazie alla libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
 Si è notato che in dati appartenenti alla categoria lavoro risultano essere molto grandi, questo è un problema perchè potrebbe generare un numero molto alto di falsi positivi durante la fase di labeling. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}} \newline
-Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset che sono stati manipolati sono pronti per essere etichettati ed uniti. 
-\section{Labeling}
-La fase di labeling è l'ultimo step prima di ottenere il dataset finale, a seconda del topic trattato nel dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica il topic che viene trattato da quel testo. Numeri utilizzati
-\begin{enumerate}
-    \setcounter{enumi}{-1}
-    \item politica
-    \item salute
-    \item lavoro
-    \item viaggi
-    \item generale
-\end{enumerate}
+Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset che sono stati manipolati sono pronti per essere etichettati ed uniti.
+
+\section{Topic classification}
+
+\subsection{Creazione del dataset}
+\label{ssec:dataset}
+blablabla rimandare ai due sotto-punti.
+\subsubsection{Topic Labeling}
+\label{sssec:topiclabeling}
+La fase di labeling è l'ultimo step prima di ottenere il dataset finale, a seconda del topic trattato nel dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica il topic che viene trattato da quel testo.
+\FloatBarrier
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Topic} & \textbf{ID} \\ \hline
+Politics & 0 \\ \hline
+Health & 1 \\ \hline
+Job & 2 \\ \hline
+Travel & 3 \\ \hline
+General & 4 \\ \hline
+\end{tabular}
+\end{table}
 Una volta completato il labeling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verranno selezionati tre campioni uno da 200(\textit{ds200.csv)}, uno da 1000(\textit{ds1000.csv}) e un altro da 10.000 entry per ogni topic(\textit{ds10000.csv}).\newline
 I dataset da 1000 e da 10.000 andranno in input ad un primo classificatore(il funzionamento di questo classificatore va spiegato in seguito) mentre il dataset da 200 entry per topic sarà sottoposto ad una seconda fase di labeling.
 
-\section{Il classificatore}
+\subsubsection{Rappresentazione del testo}
+\label{sssec:rappresentazione}
+Per rappresentare i testi nel nostro dataset abbiamo utilizzato Universal Sentence Encoder, esso ci permette di rappresentare una frase scritta in linguaggio naturale in un vettore da 512 elementi.\newline
+Abbiamo effettuato l'embed di tutti gli elementi presenti in \textit{ds1000.csv}, quindi ogni riga appartenente ad ogni topic sarà composta da un vettore da 512 elementi
+\FloatBarrier
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Embed} & \textbf{Topic} \\ \hline
+Politics{[}512{]} & 0 \\ \hline
+Health{[}512{]} & 1 \\ \hline
+Job{[}512{]} & 2 \\ \hline
+Travel{[}512{]} & 3 \\ \hline
+General{[}512{]} & 4 \\ \hline
+\end{tabular}
+\end{table}
+Le frasi di cui è stato fatto l'embed vengono salvate in \textit{X\_embed}, mentre le label di rifiremto per ogni frase sono stata salvate i \textit{y}. Possiamo dire che \textit{X\_embed} e \textit{y} sono una nuova rappresentazione di \textit{ds1000.csv}
+
+\subsection{Validation}
+Inizialmente abbiamo diviso in due subset \textit{ds1000.csv} il primo, il \textbf{training set}, ottenuto l'80\% degli elementi scelti in maniera casuale, il secondo, il \textbf{test set} ottenuto includendo il restante 20\% degli elementi.\newline
+Come detto in precedenza il dataset risulta bilanciato dato che abbiamo usato solo 1000 elementi per ogni topic, quindi per validare il modello è stata usata la 5-fold cross-validation usando il metodo \textit{GridSearchCV}.\newline
+La k-fold cross-validation è una procedura di resampling utilizzata per valutare modelli di machine learning su un campione di dati limitato. La procedura ha come unico parametro \textit{k} che rappresenta il numero di quanti subset si devono creare partendo dal campione originale, nel nostro caso $ k = 5 $.
+\begin{comment}
+Divisione dataset 80 20
+K fold cross validation 
+rf si basa principalmente su numero stimatori. Abbiamo provato da m a w.
+
+tabella di quelli provati con risultato
+\end{comment}
+\subsection{Testing}
 Il classificatore\footnote{\url{https://github.com/CiccioTecchio/IA-Knoxly/blob/master/src/modello.py}} ha lo scopo di individuare il topic di appartenenza di una frase.\newline
 Viene implementato utilizzando il metodo \textbf{Random Forest\footnote{\url{https://en.wikipedia.org/wiki/Random_forest}}}, 
 esso prende in input ds1000.csv, utilizza USE per ottenere l'embed di ogni singola entry del dataset, dopodichè, la lista degli embed e la lista dei topic a cui appertiene ogni embed vengono date in input al classificatore. Esso dividerà il dataset in due parti una prima parte, l'80\%, utilizzata per l'addestramento(training set) il restante 20\% verrà utilizzato per effettuare le predizioni(test set).\newline
@@ -50,10 +100,10 @@ La tabella seguente riporta le performance ottenute da questo classificatore al 
 \hline
 \multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & \multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
  &  & Politics & Health & Job & Travel & General \\ \hline
-\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.972} \\ \cline{2-7} 
- & Precision & 0.994 & 0.985 & 0.989 & 0.912 & 0.985 \\ \cline{2-7} 
- & Recall & 0.91 & 0.985 & 0.97  & 0.995 & 1 \\ \cline{2-7} 
- & Fscore & 0.95 & 0.985 & 0.979 & 0.952 & 0.992 \\ \hline
+\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.983} \\ \cline{2-7} 
+ & Precision & 0.979 & 0.99 & 0.985 & 0.966 & 0.994 \\ \cline{2-7} 
+ & Recall & 0.965 & 0.995 & 0.985  & 0.995 & 0.975 \\ \cline{2-7} 
+ & Fscore & 0.972 & 0.992 & 0.985 & 0.980 & 0.984 \\ \hline
 \end{tabular}
 \caption{misure training ds1000.csv}
 \end{table}
@@ -76,11 +126,15 @@ La tabella seguente riporta le misure ottenute dalla seconda fase.
 \FloatBarrier
 commento delle misure.\newline
 
-\section{Labeling sensisbilità}
+\section{Senstivity classification}
+
+\subsection{Creazione Dataset sensitivity}
+
+\subsubsection{Sensitive labeling}
 In questa fase a ds200.csv è stata aggiunta una terza colonna denominata \quotes{sensibile}, nella quale verrà scritto \textbf{1} se la riga contiene un dato sensibile 0 altrimenti.\newline
 Prima di etichettare le entry sensibili, determinare al meglio quando un dato è sensibile o meno ci siamo rifatti allo studio di Rumbald et al.\cite{dataSpectrum}
 
-\subsection{Tabella delle sensibilità}
+\paragraph{Tabella delle sensibilità}
 In accordo allo studio fatto da Rumbal sono state identficate le seguenti regole
 \FloatBarrier
 \begin{table}[h]
