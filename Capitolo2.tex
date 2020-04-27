@@ -18,15 +18,20 @@ Esistono diverse metriche per valutare i punteggi dei modelli di machine learnin
     \begin{equation*} recall = \dfrac {tp}{(tp + fn)}\end{equation*} 
     dove $tp$ rappresenta il numero di veri positivi e $fn$ il numero di falsi negativi
     
-\end{enumerate}{}
+    \item \textbf{F-score}: è la media armonica di recall e precision, è una misura che ci indica la bontà del classificatore:
+    \begin{equation*}F-score = \left ( \frac{recall^{-1} + precision^{-1}}{2} \right)^{-1}\end{equation*}
+    possiamo dire di avere un buon classificatore quando abbiamo una alta accuracy e una bassa recall
+    
+\end{enumerate}
 
 \section{Universal Sentence Encoder}
-Universal Sentence Encoder(USE) è un encoder che trasforma del testo scritto in linguaggio naturale in un vettore di grandi dimensioni, questo encoder può essere usato per task di text classification, semantic similarity, clustering e altri task riguardanti l'ambito dell'analisi del testo scritto in linguaggio naturale.\newline
+Universal Sentence Encoder(USE) è un encoder che trasforma del testo scritto in linguaggio naturale in un vettore di 512 elementi, questo encoder può essere usato per task di text classification, semantic similarity, clustering e altri task riguardanti l'ambito dell'analisi del testo scritto in linguaggio naturale.\newline
 Nel seguente esempio viene mostrato il funzionamento di USE, egli prende in input un testo scritto in linguaggio naturale, codifica la frase in un array di 512 numeri reali, infine è stata misurata la similarità semantica delle frasi codificate.
 \begin{figure}[h]
     \centering
-    \includegraphics [scale=0.42]{Figure/use.png}
+    \includegraphics [scale=0.4]{Figure/use.png}
     \caption{Esempio funzionamento USE}
     \label{fig:my_label}
 \end{figure}
-USE ha vari tipo di encoder, quello utilizzato in questo lavoro è un encoder multilingua che supporta 16 lingue diverse(arabo, cinese-semplificato, cinese-tradizionale, francese, inglese, italiano, giapponese, coreano, olandese, polacco, portoghese, spagnolo, tailandese, turco, russo, tedesco).
+\FloatBarrier
+USE ha vari tipo di encoder, quello utilizzato in questo lavoro è un encoder multilingua che supporta 16 lingue diverse(arabo, cinese-semplificato, cinese-tradizionale, francese, inglese, italiano, giapponese, coreano, olandese, polacco, portoghese, spagnolo, tailandese, turco, russo, tedesco). In questo modo il nostro i modelli che verranno addestrati saranno in grado di riconoscere dati sensibili scritti nelle 16 lingue indicate in precedenza.

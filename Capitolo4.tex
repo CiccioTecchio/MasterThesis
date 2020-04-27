@@ -1,23 +1,16 @@
-Per blabla è stata progettata una metodologia che si suddivide nelle seguenti fasi:
+Per realizzare l'intelligenza artificiale di Knoxly è stata seguita una metodologia che si suddivide nelle seguenti fasi:
 \begin{itemize}
-    \item Data collection:
-    \item Text classification:
-        \begin{itemize}
-            \item 
-        \end{itemize}
-    \item Sensitivity classification:
-        \begin{itemize}
-            \item 
-        \end{itemize}
+    \item Data collection: raccolta data e pre-processing dei dati
+    \item Topic classification: realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza
+    \item Sensitivity classification: realizzare un modello che data una frase è in grado di capire quanto essa sia sensibile
 \end{itemize}
-\section{Raw Data}
-Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati). Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset.
-Per ogni topic scelto sono stati presi dei dataset da kaggle, i dataset sceltisono i seguenti:
+\section{Data collection}
+Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati). Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset. Di seguito vengono elencati i dataset selezionati:\newline
 \begin{table}[h]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{Topic} & \textbf{link} & \textbf{num. elementi} \\ \hline
+\textbf{Topic} & \textbf{nome dataset} & \textbf{num. elementi} \\ \hline
 Politics & Election Day Tweets & 393.764 \\ \hline
 Health & Medical Transcriptions & 2.348 \\ \hline
 Health & Medical Speech, Transcription, and Intent & 706 \\ \hline
@@ -25,25 +18,42 @@ Job & AMAZON Job Skills & 2.505 \\ \hline
 Travel & Twitter US Airline Sentiment & 14.427 \\ \hline
 General & The Movies Dataset & 44.306 \\ \hline
 \end{tabular}
+\caption{dateset utilizzati e numero di entry}
 \end{table}
-Si è deciso di introdurre un topic che chiameremo \quotes{generale} questo topic ci servirà per aumentare l'eterogeneità dei dati, sono state scelte le trame dei film perchè queste sono brevi e raccontano una storia e spesso anche dei dettagli che sensibili riguardo i personaggi.
+\FloatBarrier
+Si è deciso di introdurre un topic che chiameremo \quotes{General} questo topic ci servirà per aumentare l'eterogeneità dei dati. In questo topic sono contenute delle trame di film, sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili riguardo i personaggi.\newline
+I dataset scelti sono composti da file .csv essi presentano diverse colonne alcune di queste irrilevanti per questo lavoro.\newline
+Di seguito verranno elencati i file scelti e le colonne selezionate che comporranno il dataset
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Topic}} & \textbf{file} & \multicolumn{1}{c|}{\textbf{col. scelta}} \\ \hline
+Politics & election\_day\_tweets.csv & colonna: text \\ \hline
+Health & mtsamples.csv & description \\ \hline
+Health & overview-of-recordings.csv & phrase \\ \hline
+Job & amazon\_jobs\_dataset.csv & \begin{tabular}[c]{@{}l@{}}description,\\ basic qualifications,\\ preferred qualifications\end{tabular} \\ \hline
+Travel & Tweets.csv & text \\ \hline
+General & movie\_metadata.csv & overview \\ \hline
+\end{tabular}
+\caption{file e colonne selezionate dai dataset di kaggle}
+\end{table}
+\FloatBarrier
 
 \section{Preprocessing sui raw data}
 \label{sec:preprocessingraw}
 I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
-Come prima cosa dai dataset scaricati sono state escluse le colonne che non erano rilevanti per la costruzione del nostro dataset ad esempio dai dataset che contenevano tweet è stata selezionata solo la colonna che contiene il testo del tweet escludendo tutte le altre colonne che contenevano altre informazioni relative al tweet quali id, autore ecc...\newline
-Una volta selezionate le colonne sono stati eliminate da queste le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata possibile grazie alla libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
-Si è notato che in dati appartenenti alla categoria lavoro risultano essere molto grandi, questo è un problema perchè potrebbe generare un numero molto alto di falsi positivi durante la fase di labeling. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}} \newline
-Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset che sono stati manipolati sono pronti per essere etichettati ed uniti.
+Dai vari subset ricavati dai dataset originali di kaggle sono state eliminate le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata fata utilizzando la libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
+Si è notato che in dati appartenenti alla categoria lavoro risultano essere molto grandi, questo è un problema perchè potrebbe generare un numero molto alto di falsi positivi durante la fase di sesitiveness labeling. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}}.\newline
+Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset processati sono pronti per essere uniti ed etichettati.
 
 \section{Topic classification}
 
 \subsection{Creazione del dataset}
-\label{ssec:dataset}
-blablabla rimandare ai due sotto-punti.
+Una volta ultimata la fase di pre-processing i dati sono stati uniti in unico dataset
 \subsubsection{Topic Labeling}
 \label{sssec:topiclabeling}
-La fase di labeling è l'ultimo step prima di ottenere il dataset finale, a seconda del topic trattato nel dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica il topic che viene trattato da quel testo.
+La fase di labeling è l'ultimo step prima di ottenere il dataset il dataset che verrà utilizzato per la topic classification. A seconda del topic trattato dal dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica univocamente il topic a cui la frase fa riferimeto.
 \FloatBarrier
 \begin{table}[h]
 \centering
@@ -57,8 +67,8 @@ Travel & 3 \\ \hline
 General & 4 \\ \hline
 \end{tabular}
 \end{table}
-Una volta completato il labeling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verranno selezionati tre campioni uno da 200(\textit{ds200.csv)}, uno da 1000(\textit{ds1000.csv}) e un altro da 10.000 entry per ogni topic(\textit{ds10000.csv}).\newline
-I dataset da 1000 e da 10.000 andranno in input ad un primo classificatore(il funzionamento di questo classificatore va spiegato in seguito) mentre il dataset da 200 entry per topic sarà sottoposto ad una seconda fase di labeling.
+Una volta completato il labelling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verranno selezionati tre campioni uno da 200(\textit{ds200.csv)}, uno da 1000(\textit{ds1000.csv}) e un altro da 2000 entry per ogni topic(\textit{ds2000.csv}).\newline
+I dataset da 1000 e da 2000 andranno in input ad un primo classificatore mentre il dataset da 200 entry per topic sarà sottoposto ad una seconda fase di labeling.
 
 \subsubsection{Rappresentazione del testo}
 \label{sssec:rappresentazione}
@@ -82,18 +92,26 @@ Le frasi di cui è stato fatto l'embed vengono salvate in \textit{X\_embed}, men
 \subsection{Validation}
 Inizialmente abbiamo diviso in due subset \textit{ds1000.csv} il primo, il \textbf{training set}, ottenuto l'80\% degli elementi scelti in maniera casuale, il secondo, il \textbf{test set} ottenuto includendo il restante 20\% degli elementi.\newline
 Come detto in precedenza il dataset risulta bilanciato dato che abbiamo usato solo 1000 elementi per ogni topic, quindi per validare il modello è stata usata la 5-fold cross-validation usando il metodo \textit{GridSearchCV}.\newline
-La k-fold cross-validation è una procedura di resampling utilizzata per valutare modelli di machine learning su un campione di dati limitato. La procedura ha come unico parametro \textit{k} che rappresenta il numero di quanti subset si devono creare partendo dal campione originale, nel nostro caso $ k = 5 $.
-\begin{comment}
-Divisione dataset 80 20
-K fold cross validation 
-rf si basa principalmente su numero stimatori. Abbiamo provato da m a w.
+La \textbf{k-fold} cross-validation è una procedura di resampling utilizzata per valutare modelli di machine learning su un campione di dati limitato. La procedura ha come unico parametro \textit{k} che rappresenta il numero di quanti subset si devono creare partendo dal campione originale, nel nostro caso $ k = 5 $.\newline
+Il modello utilizzato per addestrare il classificatore è il \textbf{Random Forest} esso prende in input gli embed e il numero dei vari estimatori che hanno il compito di .... La seguente tabella mostra il numero di estimatori utilizzati e i risultati ottenuti
 
-tabella di quelli provati con risultato
-\end{comment}
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{# estimatori} & \textbf{Variazione} & \textbf{Risultato} \\ \hline
+17 & +/-0.012 & 0.948 \\ \hline
+37 & +/-0.010 & 0.963 \\ \hline
+51 & +/-0.009 & 0.965 \\ \hline
+177 & +/-0.006 & 0.966 \\ \hline
+213 & +/-0.006 & 0.968 \\ \hline
+517 & +/-0.005 & 0.966 \\ \hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
 \subsection{Testing}
-Il classificatore\footnote{\url{https://github.com/CiccioTecchio/IA-Knoxly/blob/master/src/modello.py}} ha lo scopo di individuare il topic di appartenenza di una frase.\newline
-Viene implementato utilizzando il metodo \textbf{Random Forest\footnote{\url{https://en.wikipedia.org/wiki/Random_forest}}}, 
-esso prende in input ds1000.csv, utilizza USE per ottenere l'embed di ogni singola entry del dataset, dopodichè, la lista degli embed e la lista dei topic a cui appertiene ogni embed vengono date in input al classificatore. Esso dividerà il dataset in due parti una prima parte, l'80\%, utilizzata per l'addestramento(training set) il restante 20\% verrà utilizzato per effettuare le predizioni(test set).\newline
+
 La tabella seguente riporta le performance ottenute da questo classificatore al termine della prima fase
 \begin{table}[h]
 \begin{tabular}{|l|l|c|c|c|c|c|}
@@ -109,19 +127,19 @@ La tabella seguente riporta le performance ottenute da questo classificatore al 
 \end{table}
 \FloatBarrier
 commento delle misure.\newline
-Nella seconda fase viene effettuato il \quotes{testing into the wild} dove la predizione del topic di appartenza dell'embed di una frase viene fatta su un dataset molto più grande nel nostro caso \textit{ds10000.csv}.\newline
+Nella seconda fase viene effettuato il \quotes{testing into the wild} dove la predizione del topic di appartenza dell'embed di una frase viene fatta su un dataset molto più grande nel nostro caso \textit{ds2000.csv}.\newline
 La tabella seguente riporta le misure ottenute dalla seconda fase. 
 \begin{table}[h]
 \begin{tabular}{|l|l|c|c|c|c|c|}
 \hline
 \multirow{2}{*}{\textbf{Classifier}} & \multirow{2}{*}{\textbf{Metric}} & \multicolumn{5}{c|}{\textbf{Topics}} \\ \cline{3-7} 
  &  & Politics & Health & Job & Travel & General \\ \hline
-\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.970} \\ \cline{2-7} 
- & Precision & 0.983 & 0.986 & 0.978 & 0.916 & 0.99 \\ \cline{2-7} 
- & Recall & 0.914 & 0.989 & 0.972 & 0.986 & 0.987 \\ \cline{2-7} 
- & Fscore & 0.947 & 0.987 & 0.975 & 0.95 & 0.988 \\ \hline
+\multirow{4}{*}{RF} & Accuracy & \multicolumn{5}{c|}{0.988} \\ \cline{2-7} 
+ & Precision & 0.992 & 0.995 & 0.985 & 0.975 & 0.993 \\ \cline{2-7} 
+ & Recall & 0.969 & 0.995 & 0.993 & 0.996 & 0.988 \\ \cline{2-7} 
+ & Fscore & 0.980 & 0.995 & 0.989 & 0.985 & 0.999 \\ \hline
 \end{tabular}
-\caption{misure validation ds10.000.csv}
+\caption{misure validation ds2000.csv}
 \end{table}
 \FloatBarrier
 commento delle misure.\newline
