@@ -13,6 +13,12 @@
 \usepackage{hyperref}
 \usepackage{multirow}
 \usepackage{placeins}
+\usepackage{booktabs}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\quotes}[1]{``#1''}
+
 %rimuove bordi dai link
 \hypersetup{
     colorlinks=true,
@@ -86,10 +92,7 @@
 
 \newpage
 	
-\newcommand{\quotes}[1]{``#1''}
 \tableofcontents
-\listoffigures %elenco figure
-\listoftables %elenco tabelle
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -121,9 +124,17 @@
 \chapter{Metodologia}
 \input{Capitolo4.tex}
 
-%\chapter{Titolo capitolo}
-%\input{Capitolo3.tex}
+\chapter{Knoxly}
+\input{Capitolo5.tex}
+
+\chapter*{Appendice}
+\setlength{\headheight}{17pt}
+\rhead{}
+\fancyhead[L]{\rightmark}
+\cfoot{\thepage}
+\input{Appendice.tex}
 
 \input{Bibliografia.tex}
-
+\listoffigures %elenco figure
+\listoftables %elenco tabelle
 \end{document}

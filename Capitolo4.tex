@@ -1,40 +1,62 @@
-Per realizzare l'intelligenza artificiale di Knoxly è stata seguita una metodologia che si suddivide nelle seguenti fasi:
+L'obiettivo di questo lavoro è dotare Knoxly di un modulo intelligente capace di comprendere la semantica di un testo scritto in linguaggio naturale. (parla di argomenti potenzialmente sensibili?~\cite{dataspectrum}), comprendere se il testo che si sta per divulgare sul Web contiene dati sensibili o personali (l'utente sta divulgando la propria opinione politica?~\cite{}) ed inviare una notifica all' (privacy awareness), ed adattarsi alle esigenze dell'utente (alcuni utenti, es. esercenti fisici, potrebbero non essere interessati a ricevere notifiche riguardo la possibile divulgazione della loro location).
+Per realizzare il core intelligente di Knoxly è stata seguita una metodologia che si suddivide nelle seguenti fasi:
 \begin{itemize}
-    \item Data collection: raccolta data e pre-processing dei dati
-    \item Topic classification: realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza
-    \item Sensitivity classification: realizzare un modello che data una frase è in grado di capire quanto essa sia sensibile
+    \item Data collection (Sezione~\ref{datacollection}): raccolta data e pre-processing dei dati
+    \item Topic classification (Sezione~\ref{sec:topicclass}): realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza
+    \item Sensitivity classification (Sezione~\ref{sec:sensclass}): realizzare un modello che data una frase è in grado di capire quanto essa sia sensibile
+    \item Personalized sensitivity classification (Sezione~\ref{sec:pres_sens_class}): realizzare un modello in grado di capire quali siano i dati sensibili per un utente
 \end{itemize}
+
 \section{Data collection}
-Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati). Questi sono stati presi da vari dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} dopodichè sono stati \quotes{puliti} e uniti in un unico dataset. Di seguito vengono elencati i dataset selezionati:\newline
+\label{datacollection}
+Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati).
+I topic sono stati individuati in base a quanto detto nel paragrafo~\ref{ssec:sensitive_data} .
+
+
+Una volta definiti i topic è stato effettuato il download di dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} i quali dopo una fase di preprocessing sono stati uniti in un unico dataset raw. Nella tabella~\ref{tbl:ds_scelti} vengono mostrati i dataset selezionati per ogni topic con il relativo numero di elementi e il link per scaricarlo:
+
+
 \begin{table}[h]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Topic} & \textbf{nome dataset} & \textbf{num. elementi} \\ \hline
-Politics & Election Day Tweets & 393.764 \\ \hline
-Health & Medical Transcriptions & 2.348 \\ \hline
-Health & Medical Speech, Transcription, and Intent & 706 \\ \hline
-Job & AMAZON Job Skills & 2.505 \\ \hline
-Travel & Twitter US Airline Sentiment & 14.427 \\ \hline
-General & The Movies Dataset & 44.306 \\ \hline
-\end{tabular}
-\caption{dateset utilizzati e numero di entry}
+\label{tbl:ds_scelti}
+\begin{center}
+    \fontsize{4.6mm}{4.6mm}\selectfont{
+    \renewcommand{\arraystretch}{1.4}
+    \setlength\tabcolsep{4.0pt}
+    \begin{tabular}{c|c|c|c}
+    \toprule
+    \textbf{Topic} & \textbf{nome dataset} & \textbf{Reference} & \textbf{\# entry} \\
+    \midrule
+    Politics & Election Day Tweets & \cite{ds_pol}  & 393.764 \\ \hline
+    Health & Medical Transcriptions & \cite{ds_health1} & 2.348 \\ \hline
+    Health & Medical Speech, Transcription, and Intent & \cite{ds_health2} & 706 \\ \hline
+    Job & AMAZON Job Skills & \cite{ds_job} & 2.505 \\ \hline
+    Travel & Twitter US Airline Sentiment & \cite{ds_travel} & 14.427 \\ \hline
+    General & The Movies Dataset & \cite{ds_general} & 44.306 \\
+    \bottomrule
+    \end{tabular}
+    }
+\end{center}
+\caption{dataset scelti per ogni topic}
 \end{table}
 \FloatBarrier
-Si è deciso di introdurre un topic che chiameremo \quotes{General} questo topic ci servirà per aumentare l'eterogeneità dei dati. In questo topic sono contenute delle trame di film, sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili riguardo i personaggi.\newline
-I dataset scelti sono composti da file .csv essi presentano diverse colonne alcune di queste irrilevanti per questo lavoro.\newline
+
+Si è deciso di introdurre un topic che chiameremo \quotes{General} il quale ci servirà per aumentare l'eterogeneità dei dati, creando rumore. È chiaro che un modello di machine learning basato solo sui topic potenzialmente ricchi di dati sensibili e personali, classificherebbe qualsiasi testo in una delle categorie individuate: ciò genererebbe dei falsi positivi perchè esistono dei testi che non ricadono in nessuna delle categorie tra health, politics, job e travel. Nel topic \quotes{General} sono contenute delle trame di film: sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili e personali riguardo i personaggi.
+
+I dataset scelti sono composti da file {\tt .csv}, essi presentano diverse colonne alcune di queste irrilevanti per questo lavoro.
+
 Di seguito verranno elencati i file scelti e le colonne selezionate che comporranno il dataset
-\begin{table}[h]
+
+\begin{table}[h!t]
 \centering
 \begin{tabular}{|l|c|l|}
 \hline
 \multicolumn{1}{|c|}{\textbf{Topic}} & \textbf{file} & \multicolumn{1}{c|}{\textbf{col. scelta}} \\ \hline
-Politics & election\_day\_tweets.csv & colonna: text \\ \hline
-Health & mtsamples.csv & description \\ \hline
-Health & overview-of-recordings.csv & phrase \\ \hline
-Job & amazon\_jobs\_dataset.csv & \begin{tabular}[c]{@{}l@{}}description,\\ basic qualifications,\\ preferred qualifications\end{tabular} \\ \hline
-Travel & Tweets.csv & text \\ \hline
-General & movie\_metadata.csv & overview \\ \hline
+Politics & {\tt election\_day\_tweets.csv} & text \\ \hline
+Health & {\tt mtsamples.csv} & description \\ \hline
+Health & {\tt overview-of-recordings.csv} & phrase \\ \hline
+Job & {\tt amazon\_jobs\_dataset.csv} & \begin{tabular}[c]{@{}l@{}}description,\\ basic qualifications,\\ preferred qualifications\end{tabular} \\ \hline
+Travel & {\tt Tweets.csv} & text \\ \hline
+General & {\tt movie\_metadata.csv} & overview \\ \hline
 \end{tabular}
 \caption{file e colonne selezionate dai dataset di kaggle}
 \end{table}
@@ -44,38 +66,39 @@ General & movie\_metadata.csv & overview \\ \hline
 \label{sec:preprocessingraw}
 I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
 Dai vari subset ricavati dai dataset originali di kaggle sono state eliminate le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata fata utilizzando la libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
-Si è notato che in dati appartenenti alla categoria lavoro risultano essere molto grandi, questo è un problema perchè potrebbe generare un numero molto alto di falsi positivi durante la fase di sesitiveness labeling. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}}.\newline
+Si è notato che i testi risultano essere particolarmente lunghi (lunghezza media degli annuci è di 968, SD=788.40) e ciò può rappresentare un problema di conformità rispetto gli altri dataset considerati. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}}. 
+
 Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset processati sono pronti per essere uniti ed etichettati.
 
 \section{Topic classification}
+\label{sec:topicclass}
+
+\begin{itemize}
+    \item Creazione del dataset(Sezione~\ref{ssec:createds}): realizzione del dataset utilizzato
+    \item Rapprezentazion del testo(Sezione~\ref{ssec:rappresentazione}): come è stata effettuata la conversione delle righe testuali del dataset in righe numeriche da dare in input al classificatore
+    \item Matrici di similarità(Sezione~\ref{ssec:mtrsim}:
+    rappresentazione grafica della similarità presente fra un campione di frasi appartenti al dataset
+    \item Text Labeling(Sezione~\ref{ssec:textlabeling}): le righe numeriche del dataset vengono etichettate in base al topic d'appartenenza
+    \item Validation(Sezione~\ref{ssec:validation_Topic}): validazione del modello realizzato
+    \item Testing(Sezione~\ref{ssec:testing_Topic}): testing del modello realizzato
+    \item Testing~\quotes{into the wild}(Sezione~\ref{ssec:testing_wild}): testiting delle performance del classificatore su un dataset più ampio
+\end{itemize}
+
 
 \subsection{Creazione del dataset}
-Una volta ultimata la fase di pre-processing i dati sono stati uniti in unico dataset
-\subsubsection{Topic Labeling}
-\label{sssec:topiclabeling}
-La fase di labeling è l'ultimo step prima di ottenere il dataset il dataset che verrà utilizzato per la topic classification. A seconda del topic trattato dal dataset \quotes{ripulito} accanto alla colonna contenente i testi viene aggiunta una nuovo colonna esse contiene un numero che identifica univocamente il topic a cui la frase fa riferimeto.
-\FloatBarrier
-\begin{table}[h]
-\centering
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Topic} & \textbf{ID} \\ \hline
-Politics & 0 \\ \hline
-Health & 1 \\ \hline
-Job & 2 \\ \hline
-Travel & 3 \\ \hline
-General & 4 \\ \hline
-\end{tabular}
-\end{table}
-Una volta completato il labelling tutti i singoli dataset vengo uniti in un unico dataset da 2 colonne(testo, topic) da più mezzo milione di righe, da queste verranno selezionati tre campioni uno da 200(\textit{ds200.csv)}, uno da 1000(\textit{ds1000.csv}) e un altro da 2000 entry per ogni topic(\textit{ds2000.csv}).\newline
-I dataset da 1000 e da 2000 andranno in input ad un primo classificatore mentre il dataset da 200 entry per topic sarà sottoposto ad una seconda fase di labeling.
+\label{ssec:createds}
+Una volta ultimata la fase di pre-processing i dati sono stati uniti in unico dataset composto da 2426861 elementi. Successivamente si è passati alla fase di rappresentazione del testo (Sezione~\ref{ssec:rappresentazione}) e labeling (Sezione~\ref{ssec:textlabeling}).
 
-\subsubsection{Rappresentazione del testo}
-\label{sssec:rappresentazione}
-Per rappresentare i testi nel nostro dataset abbiamo utilizzato Universal Sentence Encoder, esso ci permette di rappresentare una frase scritta in linguaggio naturale in un vettore da 512 elementi.\newline
-Abbiamo effettuato l'embed di tutti gli elementi presenti in \textit{ds1000.csv}, quindi ogni riga appartenente ad ogni topic sarà composta da un vettore da 512 elementi
+
+
+\subsection{Rappresentazione del testo}
+\label{ssec:rappresentazione}
+Per rappresentare i testi è stato utilizzato Universal Sentence Encoder (vedi Sezione~\ref{ssec:use})che permette di rappresentare una frase scritta in linguaggio naturale in un vettore a lunghezza fissa, nello specifico 512 elementi.
+
+
+Abbiamo effettuato l'embed di tutti gli elementi presenti in \textit{ds1000.csv}, quindi ogni riga - testi appartenenti ai diversi topic - sarà composta da un vettore di 512 elementi
 \FloatBarrier
-\begin{table}[h]
+\begin{table}[h!t]
 \centering
 \begin{tabular}{|c|c|}
 \hline
@@ -87,19 +110,39 @@ Travel{[}512{]} & 3 \\ \hline
 General{[}512{]} & 4 \\ \hline
 \end{tabular}
 \end{table}
-Le frasi di cui è stato fatto l'embed vengono salvate in \textit{X\_embed}, mentre le label di rifiremto per ogni frase sono stata salvate i \textit{y}. Possiamo dire che \textit{X\_embed} e \textit{y} sono una nuova rappresentazione di \textit{ds1000.csv}
+Le frasi di cui è stato fatto l'embed vengono salvate nella struttura \textit{X\_embed}.
+
+\input{CommentMtrTopic}
 
 \subsection{Validation}
-Inizialmente abbiamo diviso in due subset \textit{ds1000.csv} il primo, il \textbf{training set}, ottenuto l'80\% degli elementi scelti in maniera casuale, il secondo, il \textbf{test set} ottenuto includendo il restante 20\% degli elementi.\newline
-Come detto in precedenza il dataset risulta bilanciato dato che abbiamo usato solo 1000 elementi per ogni topic, quindi per validare il modello è stata usata la 5-fold cross-validation usando il metodo \textit{GridSearchCV}.\newline
-La \textbf{k-fold} cross-validation è una procedura di resampling utilizzata per valutare modelli di machine learning su un campione di dati limitato. La procedura ha come unico parametro \textit{k} che rappresenta il numero di quanti subset si devono creare partendo dal campione originale, nel nostro caso $ k = 5 $.\newline
-Il modello utilizzato per addestrare il classificatore è il \textbf{Random Forest} esso prende in input gli embed e il numero dei vari estimatori che hanno il compito di .... La seguente tabella mostra il numero di estimatori utilizzati e i risultati ottenuti
+\label{ssec:validation_Topic}
+Inizialmente abbiamo diviso il dataset in Tabella~\ref{tab:dataset} in un 80\% riservato al training ed un 20\% riservato al testing attraverso la funzione {\tt train\_test\_split} (\textit{stratified}) di scikit-learn\footnote{\url{https://scikit-learn.org/stable/}} per Python.
+
+È stata effettuata una fase di validation sfruttando il training set. In particolare si è adoperata la \textbf{k-fold} cross-validation, una procedura di resampling utilizzata per valutare modelli di machine learning su un campione di dati limitato. La procedura ha come unico parametro \textit{k} che rappresenta il numero di quanti subset si devono creare partendo dal campione originale, nel nostro caso $ k = 5 $.
+
+Tale fase è stata sfruttata anche per l'hyper-parameter tuning usando il metodo {\tt GridSearchCV} di scikit-learn per Python.
+
+In questo lavoro sono stati usati i più popolari modelli di machine learning disponibili in letteratura e implementati in scikit-learn. Questi sono il Random Forest(Sezione~\ref{ssec:RF}), Support Vector Machine(Sezione~\ref{ssec:SVM}), MultiLayer Perceptron(Sezione~\ref{ssec:MLP}) .
+
+
+Le performance dei classificatori sono state valutate con le più popolari metrice (ved Sezioine~\ref{metrics}).
+
+Per ogni modello, sono stati valutati i seguenti hyper-parameters:
+
+\begin{itemize}
+	\item Random Forest (RF): le sue prestazioni si basano principalmente sul \textit{numero di stimatori}, quindi abbiamo testato da 20 a 200 stimatori. I migliori risultati sono stati trovati tra 100 e 550 stimatori.
+	\item Support Vector Machines (SVM): è stato testato su diversi \textit{kernels}. (polinomio, sigmoide, radiale) e ottimizzato rispetto al parametro \textit{penalty C}. (da 0,1 a 100). I migliori risultati sono stati trovati con kernel radiale e C da 1 a 100.
+	\item MultiLayer Perceptron (MLP): si basa principalmente sulla dimensione degli strati di tessuto nascosti. Il numero di strati nascosti è stato testato da 5 alla dimensione dello strato di input (secondo il gesto tattile considerato). I migliori risultati sono stati trovati tra $\frac{1}{2}$ e $\frac{4}{5}$ di dimensione del livello di input.
+\end{itemize}
+
+
+La Tabella~\ref{tab:validationresult} mostra i migliori risultati ottenuti in validation per ciascun classificatore con i relativi parametri.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{# estimatori} & \textbf{Variazione} & \textbf{Risultato} \\ \hline
+\textbf{\# estimatori} & \textbf{Variazione} & \textbf{Risultato} \\ \hline
 17 & +/-0.012 & 0.948 \\ \hline
 37 & +/-0.010 & 0.963 \\ \hline
 51 & +/-0.009 & 0.965 \\ \hline
@@ -107,12 +150,16 @@ Il modello utilizzato per addestrare il classificatore è il \textbf{Random Fore
 213 & +/-0.006 & 0.968 \\ \hline
 517 & +/-0.005 & 0.966 \\ \hline
 \end{tabular}
+\caption{risultati ottenuti dalla fase di validation}
+\label{tab:validationresult}
 \end{table}
 \FloatBarrier
 
 \subsection{Testing}
+\label{ssec:testing_Topic}
+Una volta ottenuti i migliori parametri per ciascun classificatore abbiamo valutato le loro performance sul dataset di testing.
 
-La tabella seguente riporta le performance ottenute da questo classificatore al termine della prima fase
+La tabella~\ref{tbl:training_ds1000} riporta le performance ottenute da ciascun classificatore sul testing set.
 \begin{table}[h]
 \begin{tabular}{|l|l|c|c|c|c|c|}
 \hline
@@ -124,11 +171,24 @@ La tabella seguente riporta le performance ottenute da questo classificatore al 
  & Fscore & 0.972 & 0.992 & 0.985 & 0.980 & 0.984 \\ \hline
 \end{tabular}
 \caption{misure training ds1000.csv}
+\label{tbl:training_ds1000}
 \end{table}
 \FloatBarrier
-commento delle misure.\newline
-Nella seconda fase viene effettuato il \quotes{testing into the wild} dove la predizione del topic di appartenza dell'embed di una frase viene fatta su un dataset molto più grande nel nostro caso \textit{ds2000.csv}.\newline
-La tabella seguente riporta le misure ottenute dalla seconda fase. 
+Si ricorda che l'obiettivo di questo step è di sviluppare un metodo per riconoscere il topic d'appartenenza di un testo scritto in linguaggio naturale con riferimento ai quattro topic più citati nella letteratura sulla privacy, più un topic generico. In particolare, si vuole un classificatore capace di ottenere buone prestazioni su tutte le classi individuate. 
+
+questo si comporta male su questa classe
+quell'altro su quell'altra
+
+Random Forest risulta essere il migliore per tutte le classi con Fscore da 0.XXX a 0.YYY.
+
+
+Il \textit{TopicClassifier} basato su RF così addestrato è stato dumpato in un oggetto {\tt pickle}\footnote{https://docs.python.org/3/library/pickle.html}.
+
+\subsection{Testing \textit{into the wild}}
+\label{ssec:testing_wild}
+\textit{TopicClassifier} è stato oggetto di una ulteriore fase di testing. Si è pensato di misurare le performance del classificatore su un dataset molto più ampio, rinominato \quotes{wild dataset}. Wild dataset è composto da 2000 elementi per ciascun topic/cateogria (politics, health, job, travel e general) non appartenenti al dataset di addestramento.
+
+La tabella~\ref{tbl:testing_wild} riporta le misure ottenute dalla sperimentazione \textit{into the wild} di \textit{TopicClassifier}. 
 \begin{table}[h]
 \begin{tabular}{|l|l|c|c|c|c|c|}
 \hline
@@ -139,78 +199,430 @@ La tabella seguente riporta le misure ottenute dalla seconda fase.
  & Recall & 0.969 & 0.995 & 0.993 & 0.996 & 0.988 \\ \cline{2-7} 
  & Fscore & 0.980 & 0.995 & 0.989 & 0.985 & 0.999 \\ \hline
 \end{tabular}
-\caption{misure validation ds2000.csv}
+\caption{misure validation wild}
+\label{tbl:testing_wild}
 \end{table}
 \FloatBarrier
-commento delle misure.\newline
+\textit{TopicClassifier} durante l'esperimento \textit{into the wild} mostra delle performace simili a quelle ottenute durante la fase di testing (Sezione~\ref{ssec:testing_Topic}), ragion per cui si può affermare di aver effettuato una fase di training efficace.
 
-\section{Senstivity classification}
+\section{Sensitivity classification}
+\label{sec:sensclass}
+Una volta ottenuto un classificatore in grado di riconoscere il topic d'appartenenza di un testo scritto in linguaggio naturale con riferimento ai quattro topic più citati nella letteratura sulla privacy, più un topic generico, il focus si sposta sul capire se una data frase appartente ad un topic specifico contenga o meno dati sensibili e/o personali. Ad esempio:
+\begin{table}[h]
+\label{tbl:example_sens}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Frase} & \textbf{Topic} & \textbf{Sensibile} \\ \hline
+\textit{Questa notte non ho dormito} & Health & \textbf{No} \\ \hline
+\textit{Soffro di insonnia} & Health & \textbf{Sì} \\ \hline
+\end{tabular}
+\caption{esempio di contenuti sensibili e non}
+\end{table}
+\FloatBarrier
+
+A tal fine, è stata definita una metologia come segue:
+\begin{itemize}
+    \item Creazione Dataset sensitivity(Sezione~\ref{ssec:create_sens_ds}: creazione del dataset da utilizzare durante la fase di labeling
+    \item Sensitiveness labeling(Sezione~\ref{ssec:sens_labeling}): vengono definite le regole per decidere se una frase contiene un contenuto sensibile o meno
+    \item Fase di labeling(Sezione~\ref{ssec: lbl_sens}: descrizione del dataset ottenuto dopo il labeling manuale
+    \item Approcci per l'anasisi di sensitività(Sezione~\ref{ssec:approcci}): descrizione delle possibili implementazioni dell'analisi della sensitività
+\end{itemize}
 
 \subsection{Creazione Dataset sensitivity}
+\label{ssec:create_sens_ds}
+Per la creazione di questo dataset abbiamo riutilizzato parte del {\tt ds1000.csv} precedentemente creato per la fase di Topic Classification~\ref{tbl:training_ds1000}. In particolare abbiamo selezionato con una funzione {\tt random} 200 elementi per ciascuna categoria di riferimento.
 
-\subsubsection{Sensitive labeling}
-In questa fase a ds200.csv è stata aggiunta una terza colonna denominata \quotes{sensibile}, nella quale verrà scritto \textbf{1} se la riga contiene un dato sensibile 0 altrimenti.\newline
-Prima di etichettare le entry sensibili, determinare al meglio quando un dato è sensibile o meno ci siamo rifatti allo studio di Rumbald et al.\cite{dataSpectrum}
-
-\paragraph{Tabella delle sensibilità}
-In accordo allo studio fatto da Rumbal sono state identficate le seguenti regole
+\begin{table}[h!t]
+    \centering
+    \begin{tabular}{c|c|c}
+    \hline
+        \textbf{Topic} & \textbf{ID} & \textbf{\# entry} \\ \hline
+        Politics & 0 & 200 \\ \hline
+        Health & 1 & 200 \\ \hline
+        Job & 2 & 200 \\ \hline
+        Travel & 3 & 200 \\ \hline
+        General & 4 & 200 \\ \hline
+    \end{tabular}
+    \caption{ds200.csv, il dataset da 200 elementi per topic}
+    \label{tab:ds200.csv}
+\end{table}
 \FloatBarrier
+
+\subsection{Sensitiveness labeling}
+\label{ssec:sens_labeling}
+In questa fase ds200.csv è stato etichettato secondo le regole delineate in~\cite{dataSpectrum}.
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.4]{Figure/sensTbl.png}
+    \caption{Tabella delle sensibilità utilizzata da Rumbold et al.}
+    \label{fig:sensRumbald}
+\end{figure}
+\FloatBarrier
+Le righe della tabella mostrate in figura~\ref{fig:sensRumbald} contengono la categoria a cui una frase può appartenere e quanto essa possa essere sensibile, il \textbf{livello di sensibilità} varia da 0(non sensibile) a 10(molto sensibile). I numeri presenti nelle celle variano da 0 a 4 ed essi rappresentano la \textbf{frequenza} che l'argomento descritto nella riga si presenti con il livello di sensibilità descritto nella colonna. Ad esempio prendiamo l'argomento \textit{Relating to object} esso ha un livello di sensibilità pari a 0 e nella cella viene riportato il numero 4, questo vuol dire che quando si parlerà di argomenti relativo ad oggetti questi saranno sicuramente poco sensibili.
+
+
+\subsubsection{Tabella delle sensibilità}
+In accordo allo studio fatto da Rumbal et al. è stata definita una tabella delle sensibilità a cui fare riferimento per determinare se un contenuto va etichettato come sensibile(1) o meno(0). I criteri definiti nella tabella~\ref{tbl:senstbl} sono stati ottenuti utilizzando il seguente metodo.
+
+Si definiscono $freq$ i valori di frequenza utilizzati da Rumbal et al. Sia $freq[i]$ il valore di frequenza per il livello di sensibilità $i$, $i\in[0..10]$.
+
+I livelli $i<5$ indicano basso grado di sensibilità, viceversa i livelli $i>=5$ indicano alto grado di sensibilità. 
+
+Calcoliamo quindi lo score totale di sensibilità come
+
+$\sum^{N}_{i=x}freq[i]$, $N=4,10$, $x=0,5$. 
+
+Etichettiamo un elemento non sensibile se:
+\begin{equation}
+\sum^{4}_{i=0}freq[i] > \sum^{10}_{i=5}freq[i]
+\end{equation}
+
+Viceversa, se sensibile.
+Informalmente, si confronta la somma delle frequenze che hanno un livello di sensibilità compreso fra 0 e 4 con la somma delle frequenze che hanno un livello di sensibilità compreso fra 5 e 10. Se la somma delle frequenze che hanno un livello di sensibilità compreso fra 5 e 10 è maggiore rispetto alla somma delle frequenze che hanno un livello di sensibilità compreso fra 0 e 4 allora l'argomento risulta essere sensibile e i testi che appartengono a tale argomento verranno etichettati con 1, 0 altrimenti.
+
 \begin{table}[h]
 \begin{tabular}{|l|c|}
 \hline
 \multicolumn{1}{|c|}{\textbf{Regole}} & \textbf{Sensibile} \\ \hline
-Dati relativi ad oggetti & No \\ \hline
-Dati anonimizzati relativi a persone & No \\ \hline
-Dati relativi ad interazioni uomo-macchina & No \\ \hline
-Dati relativi a posizione di uomini & \textbf{Sì} \\ \hline
-Dati relativi ad abitudini di acquisto & No \\ \hline
-Dati relativi allo stipendio & \textbf{Sì} \\ \hline
-Dati relativi al lavoro svolto & \textbf{Sì} \\ \hline
-Dati relativi alla propria classe sociale & \textbf{Sì} \\ \hline
-Indirizzo o luogo & \textbf{Sì} \\ \hline
-Chiara opinione religiosa o politica & \textbf{Sì} \\ \hline
-Altri tipi di opinioni & No \\ \hline
-Dati sul lifestyle & \textbf{Sì} \\ \hline
-Orientamento sessuale & \textbf{Sì} \\ \hline
-Sesso in generale & No \\ \hline
-Dati relativi alla gravidanza & \textbf{Sì} \\ \hline
-Dati relativi al gruppo etnico & \textbf{Sì} \\ \hline
-Dati medici o stato di salute & \textbf{Sì} \\ \hline
+Dati relativi ad oggetti & \xmark \\ \hline
+Dati anonimizzati relativi a persone & \xmark \\ \hline
+Dati relativi ad interazioni uomo-macchina & \xmark \\\hline
+Dati relativi a posizione di uomini & \cmark \\ \hline
+Dati relativi ad abitudini di acquisto & \xmark \\\hline
+Dati relativi allo stipendio & \cmark \\ \hline
+Dati relativi al lavoro svolto & \cmark \\ \hline
+Dati relativi alla propria classe sociale & \cmark \\ \hline
+Indirizzo o luogo & \cmark \\ \hline
+Chiara opinione religiosa o politica & \cmark \\ \hline
+Altri tipi di opinioni & \xmark \\\hline
+Dati sul lifestyle & \cmark \\ \hline
+Orientamento sessuale & \cmark \\ \hline
+Sesso in generale & \xmark \\ \hline
+Dati relativi alla gravidanza & \cmark \\ \hline
+Dati relativi al gruppo etnico & \cmark \\ \hline
+Dati medici o stato di salute & \cmark \\ \hline
 \end{tabular}
+\caption{Tabella delle sensibilità}
+\label{tbl:senstbl}
 \end{table}
 \FloatBarrier
-descrizione dettagliata delle regole?\newline
+
 \subsection{Fase di labeling}
-Una volta dettate le regole per il labeling si è proceduto ad etichettare manualmente ogni singola entry come sensibile(1) o non sensibile(0).\newline
-%Dopo una prima etichettatura abbiamo ottenuto il seguente numero di topic sensibili per categoria\newline
-\begin{table}[t]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{Topic} & \textbf{\# entry} & \textbf{\# entry sensibili} \\ \hline
-Politics & 200 & 40 \\ \hline
-Health & 200 & 100 \\ \hline
-Job & 200 & 21 \\ \hline
-Travel & 200 & 28 \\ \hline
-General & 200 & 71 \\ \hline
-Totale & 1000 & 260 \\ \hline
-\end{tabular}
-\caption{numero entry sensibili per categoria}
-\end{table}
-\FloatBarrier
-Si è osservato che il dataset risulta molto sbilanciato, in particolare nel topic health i tipi di interventi che ricorrono spesso sono quelli alla prostata e all'ernia, mentre nel topic job si fa riferimento a figure lavorative solo nel campo IT. Il topic più sorprendente è stato il topic General dato che i dati sensibili appartenenti ad esso fanno parte delle categorie più disparate.\newline
-Per bilanciare il dataset sono state rimosse entry sensibili dai topic che ne avevano in abbondanza ed aggiungete nuove entry sensibili nei topic dove ne erano presenti di meno. Le nuove entry da aggiungere sono state selezionate manualmente da ds1000.csv, mentre le entry da rimuovere sono state quelle che trattavano argomenti ripetuti molte volte all'interno del topic.\newline
+\label{ssec: lbl_sens}
+Una volta dettate le regole per il labeling si è proceduto ad etichettare manualmente ogni singola entry come sensibile(1) o non sensibile(0).
+
+Una volta completata l'etichettatura abbiamo un certo numero di testi sensibili per ogni topic, questi numeri sono riportati nella tabella~\ref{tbl:ds200}. Il dataset contente testi, topic, sensibilità è stato chiamato  {\tt{ds200.csv}}.
+
 \begin{table}[h]
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Topic} & \textbf{\# entry} & \textbf{\# entry sensibili} \\ \hline
-Politics & 200 & 40 \\ \hline
-Health & 200 & 102 \\ \hline
-Job & 200 & 21 \\ \hline
-Travel & 200 & 28 \\ \hline
-General & 200 & 71 \\ \hline
-Totale & 1000 & 262 \\ \hline
+Politics & 200 & 100 \\ \hline
+Health & 200 & 100 \\ \hline
+Job & 200 & 80 \\ \hline
+Travel & 200 & 100 \\ \hline
+General & 200 & 100 \\ \hline
+Totale & 1000 & 480 \\ \hline
 \end{tabular}
-\caption{numero entry sensibili dopo il bilanciamento}
+\caption{ds200.csv}
+\label{tbl:ds200}
 \end{table}
+\FloatBarrier
+
+\subsection{Approcci per l'analisi di sensitività}
+\label{ssec:approcci}
+Per analizzare il livello di sensitività di una frase abbiamo individuato due possibili tecniche mostrate in figura~\ref{fig:approccisens}:
+\begin{enumerate}
+    \item realizzare un singolo classificatore che è addestrato per riconoscere ed individuare se una frase contiene dati sensibili/personali o meno sull'intero dataset {\tt ds200.csv};
+    \item realizzare 5 classificatori diversi, uno per ciascun topic, capaci di riconoscere ed individuare se una frase che parla di un certo argomento (cioè che appartiene ad uno dei topic di cui alla Sezione~\ref{sssec:multiclass}) contiene dati sensibili/personali o meno.
+\end{enumerate}
+Date le buone performance mostrate dalla classificazione per topic effettuata con il Random Forest(Sezione~\ref{sec:topicclass}), si è scelto di utilizzare Random Forest in entrambi gli approcci.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm]{Figure/grafici/vs_cropped.pdf}
+    \caption{figura riassuntiva degli approcci analisi di sensitività}
+    \label{fig:approccisens}
+\end{figure}
+\FloatBarrier
+
+
+
+\subsubsection{Approccio con il singolo classificatore}
+\label{sssec:singleclass}
+Con questo approccio viene realizzato un singolo classificatore in grado di riconosce frasi contenenti dati sensibili e/o personali. Il vantaggio è quello di avere un unico classificatore sensitività in grado di individuare contenuti sensibili, lo svantaggio è il fatto che questo tipo di classificatore ha una conoscenza a grana grossa della di un dato sensibile e quindi è facile che sbagli ad assegnare il grado di sensibilità.
+\begin{table}[h]
+\label{tbl:validation_sens}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimatori} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.061 & 0.760 \\ \hline
+37 & +/-0.079 & 0.783 \\ \hline
+51 & +/-0.075 & 0.806 \\ \hline
+177 & +/-0.076 & 0.836 \\ \hline
+213 & +/-0.041 & 0.840 \\ \hline
+517 & +/-0.057 & 0.847 \\ \hline
+1013 & +/-0.058 & 0.851 \\ \hline
+\end{tabular}
+\caption{risultati score ottenuti in  fase di validation}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.765} \\ \hline
+Precision & 0.776 & 0.752 \\ \hline
+Recall & 0.769 & 0.760 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.848} \\ \hline
+\end{tabular}
+\caption{risultati score ottenuti in  fase di training}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_200}\newline
+
+Le performance del classificatore di sensibilità singolo sono discrete, ma dobbiamo sempre tener conto della limitata conoscenza può avere.
+
+\subsubsection{Approccio con classificatori multipli}
+\label{sssec:multiclass}
+Dopo aver provato questo approccio si è deciso di implementare 5 differenti classificatori di sensitività(uno per ogni topic) essi verranno addestrati a riconoscere argomenti sensibili sui 200 elementi che appartengono ad ogni topic di {\tt ds200.csv}.
+
+Di seguito verranno mostrati tutti i risultati ottenuti durante la validation e il training dei vari classificatori di sensibilità, per esigenze di spazio le matrici di confusione di ogni classificatore sono state riportate nella appendice di questo testo.
+
+\subsubsection{Validation e testing sensitiveness politics}
+\label{sssec:val_testing_pol}
+
+\begin{table}[h]
+\label{tbl:val_sens_pol}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimator} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.240 & 0.781 \\ \hline
+37 & +/-0.118 & 0.858 \\ \hline
+51 & +/-0.209 & 0.858 \\ \hline
+177 & +/-0.122 & 0.888 \\ \hline
+213 & +/-0.181 & 0.878 \\ \hline
+517 & +/-0.143 & 0.890 \\ \hline
+1013 & +/-0.146 & 0.884 \\ \hline
+\end{tabular}
+\caption{risultati della validation sul classificatore di sensitivà politica}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens_pol}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.765} \\ \hline
+Precision & 0.695 & 0.764 \\ \hline
+Recall & 0.8 & 0.65 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.773} \\ \hline
+\end{tabular}
+\caption{risultati del training sul classificatore di sensitivà politica}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_p}
+
+\subsubsection{Validation e testing sensitiveness health}
+\label{sssec:val_testing_health}
+
+\begin{table}[h]
+\label{tbl:val_sens_health}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimator} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.095 & 0.945 \\ \hline
+37 & +/-0.062 & 0.963 \\ \hline
+51 & +/-0.092 & 0.956 \\ \hline
+177 & +/-0.101 & 0.952 \\ \hline
+213 & +/-0.059 & 0.964 \\ \hline
+517 & +/-0.086 & 0.958 \\ \hline
+1013 & +/-0.073 & 0.961 \\ \hline
+\end{tabular}
+\caption{risultati della validation sul classificatore di sensitivà health}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens_health}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.875} \\ \hline
+Precision & 0.894 & 0.857 \\ \hline
+Recall & 0.85 & 0.9 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.935} \\ \hline
+\end{tabular}
+\caption{risultati del training sul classificatore di sensitivà health}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_h}
+
+\subsubsection{Validation e testing sensitiveness job}
+\label{sssec:val_testing_job}
+
+\begin{table}[h]
+\label{tbl:val_sens_job}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimator} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.191 & 0.893 \\ \hline
+37 & +/-0.123 & 0.873 \\ \hline
+51 & +/-0.150 & 0.884 \\ \hline
+177 & +/-0.150 & 0.894 \\ \hline
+213 & +/-0.115 & 0.908 \\ \hline
+517 & +/-0.111 & 0.908 \\ \hline
+1013 & +/-0.119 & 0.914 \\ \hline
+\end{tabular}
+\caption{risultati della validation sul classificatore di sensitivà job}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens_job}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.85} \\ \hline
+Precision & 0.814 & 0.923 \\ \hline
+Recall & 0.956 & 0.705 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.928} \\ \hline
+\end{tabular}
+\caption{risultati del training sul classificatore di sensitivà job}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_j}
+
+\subsubsection{Validation e testing sensitiveness travel}
+\label{sssec:val_testing_travel}
+
+\begin{table}[h]
+\label{tbl:val_sens_travel}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimator} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.225 & 0.835 \\ \hline
+37 & +/-0.136 & 0.878 \\ \hline
+51 & +/-0.153 & 0.883 \\ \hline
+177 & +/-0.117 & 0.903 \\ \hline
+213 & +/-0.114 & 0.894 \\ \hline
+517 & +/-0.098 & 0.905 \\ \hline
+1013 & +/-0.092 & 0.903 \\ \hline
+\end{tabular}
+\caption{risultati della validation sul classificatore di sensitivà travel}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens_travel}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.85} \\ \hline
+Precision & 0.791 & 0.937 \\ \hline
+Recall & 0.95 & 0.75 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.971} \\ \hline
+\end{tabular}
+\caption{risultati del training sul classificatore di sensitivà travel}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_t}
+
+\subsubsection{Validation e testing sensitiveness general}
+\label{sssec:val_testing_general}
+
+\begin{table}[h]
+\label{tbl:val_sens_general}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Estimator} & \textbf{Variazione} & \textbf{Roc-AUC} \\ \hline
+17 & +/-0.251 & 0.552 \\ \hline
+37 & +/-0.189 & 0.578 \\ \hline
+51 & +/-0.182 & 0.590 \\ \hline
+177 & +/-0.232 & 0.656 \\ \hline
+213 & +/-0.221 & 0.597 \\ \hline
+517 & +/-0.233 & 0.656 \\ \hline
+1013 & +/-0.189 & 0.637 \\ \hline
+\end{tabular}
+\caption{risultati della validation sul classificatore di sensitivà general}
+\end{table}
+\FloatBarrier
+
+\begin{table}[h]
+\label{tbl:training_sens_general}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Metric} & \textbf{Non Sensibile} & \textbf{Sensibile} \\ \hline
+Accuracy & \multicolumn{2}{c|}{0.6} \\ \hline
+Precision & 0.593 & 0.625 \\ \hline
+Recall & 0.863 & 0.277 \\ \hline
+Roc-Auc & \multicolumn{2}{c|}{0.736} \\ \hline
+\end{tabular}
+\caption{risultati del training sul classificatore di sensitivà general}
+\end{table}
+\FloatBarrier
+
+Matrice di confusione~\ref{fig:mtrconf_sim_g}
+
+Dai risultati si evince che i classificatori di sensibilità singoli(tranne nel caso di general) sono più accurati rispetto al singolo classificatore di sensibilità. Quindi consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorati si è deciso di adottare la soluzione con 5 classificatori di sensibilità.
+
+Quindi per dire quanto sia sensibile una frase(la sensibilità è un valore compreso fra 0 e 1 dove 0 vuol dire non sensibile 1 sensibilissimo) si seguiranno le seguenti frasi
+
+\section{Personalized sensitivity classification}
+\label{sec:pres_sens_class}
+La privacy è una percezione soggettiva, in cui ogni utente ha il proprio livello di tolleranza nella chiusura delle informazioni private. Ancora più importante, l'atteggiamento verso la privacy varia da un argomento all'altro. Per effettuare questa operazione esistono diverse tecniche ad esempio Q-learning\cite{q-learning} e vari tipi di reinforcement learning\cite{reinfoce-learn}, agenti basati su LSTM\cite{lstm} essi sono dei modelli sulla base dei feedback ricevuti dall'ambienti in cui sono in esecuzione, ad esempio, feedback di un utente è utile ad addestrare meccanismi di recommendation.
+
+Per catturare l'atteggiamento verso la privacy personale, è stato realizzato un modello \textit{online} di learning che in base alla percezione di sensibilità dell'utente sarà in grado di segnalare solo i contenuti che per quel singolo utente risultano sensibili.
+A tale scopo ci siamo ispirati al sistema di priority inbox di gmail~\cite{inbox}.
+Il sistema è in grado di capire quali mail secondo un utente hanno una priorità maggiore rispetto alle altre. Per realizzarlo, gli autori si sono basati sulle interazioni che gli utenti avevano con le mail in arrivo: ad esempio se una mail veniva aperta dopo più di sette giorni, allora non era una mail importante quindi a quella mail dovrebbe esser assegnata una bassa priorità.
+
+Questo scenario risulta abbastanza simile al nostro caso in quanto l'utente, interagendo con il modello online dovrebbe fornire feedback riguardo la sua personale percezione di privacy.
+
+\subsection{Realizzazione}
+L'intezione è realizzare una IA lato client in grado di capire il livello di sensibilità dell'utente. La scelta di realizzare questa è IA lato client è obbligata dal momento che un tool per la prevenzione della privacy non deve violare la privacy per prevenirla. Per questo non può essere effettuata una classificazione lato server che comporterebbe privacy leakage verso first-part. Questo vincolo ci porta a dover realizzare un modello che sia \textit{leggero} in maniera tale che non rallenti la normale navigazione dell'utente sul web, e \textit{semplice} da implementare in \textit{JavaScript}. È stato scelto il Passive-Aggressive online learning method~\cite{PAalgo}. 
+
+Spiegazione del tizio sul sito... (mettere regola update)
+
+L'idea è fornire all'utente un sistema già pre-addestrato che pian piano si adatti alle sue esigenze. Per questo scopo dobbiamo adottare una strategia di transfer-learning / multi-view learning\cite{transfer-learning}.
+
+Si vuole addestrare il Customized Sensitiveness Classifier con una multi-view che include sia l'embed sia la valutazione del sensitiveness classifier. Abbiamo utilizzato in particolare la tecnica early integration. 
+
+La "early integration" consiste nel concatenare le caratteristiche associate all'embed e i risultati in probabilità ottenuti tramite SensitivenessClassifier; in questo modo ogni combinazione (concatenazione di due o più viste singole) rappresenta un campione nei set di dati. Quindi abbiamo ottenuto vettori da 514 elementi (512+2) dove i primi 512 elementi sono l'embed della fra e gli utilmi due sono la sensibilità negativa e la sensibilità positiva
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=15cm]{Figure/grafici/customized_cropped.pdf}
+    \caption{schema}
+    \label{fig:approccisens}
+\end{figure}
+\FloatBarrier
+
+prendiamo ds200
+lo dividiamo in 80 e 20
+faccio training di PA-II su 80
+faccio testing su 20
+Ottengo risultato tabella.
+
+Figo

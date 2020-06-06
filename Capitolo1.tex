@@ -16,14 +16,26 @@ Infine Qiaozhi et al. \cite{dontTweetThis} hanno cercato di fornire un' ulterior
 \end{enumerate}
 
 \section{Cos'è Knoxly}
-Knoxly (Figura 3.1) si prefigge come obiettivo quello di aiutare gli utenti ad avere una maggiore consapevolezza
+Knoxly (Figura \ref{fig:logoKnoxly}) si prefigge come obiettivo quello di aiutare gli utenti ad avere una maggiore consapevolezza
 dei dati che pubblicano/condividono sul Web , dato che il principale rischio per la privacy online è la divulgazione di
 informazioni personali e sensibili degli stessi utenti.\newline
-%aggiungere dalla Tesi di Rosaria
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{Figure/logoKnoxly.png}
+    \caption{logo di Knoxly}
+    \label{fig:logoKnoxly}
+\end{figure}
+\FloatBarrier
+Spesso gli utenti degli OSN divulgano anche senza la piena consapevolezza dati sensibili e/o personali proprio o di terzi. A tal fine, Knoxly (1) individua quali dati sensibili e personali sono presenti in un messaggio di testo che l’utente è intenzionato a pubblicare/condividere sul Web, (2) li mostra attraverso un’ interfaccia grafica user-friendly e (3) lascia all’utente decidere quali o quante informazioni sensibili e personali è disposto a condividere con la divulgazione di tale messaggio.
+
+A differenza dei convenzionali meccanismi di protezione della privacy sui dati o sui OSN, che si focalizzano principalmente sulla protezione dell’identità o di attributi privati \cite{collective-data, diff-privacy, urwho, inferr-privacy, protection-private, stalking}, Knoxly si muove verso l’idea di \quotes{\textit{privacy as having the ability to control the dissemination of sensitive information}}.
+
+Attualmente i limiti di Knoxly sono quelli intrinsechi ad una analisi lessicale. Per questa ragione, in questo lavoro verrà aggiunto un modulo semantico in grado di capire se un testo scritto da un utente contenga o meno dati sensibili e/o personali.
 
 \section{Obiettivi del lavoro}
 Questo lavoro si prefigge l'obiettivo di aggiungere a Knoxly una intelligenza artificiale(IA) in grado di poter riconoscere un dato sensibile, di segnalare all'utente la presenza di questo dato e di dare la possibilità all'utente di inviare un feedback all'IA in modo tale che essa possa imparare a riconoscere quali sono i dati sensibili secondo l'utente che sta utilizzando il plugin.
 \subsection{I dati sensibili}
+\label{ssec:sensitive_data}
 Secondo la normativa GDPR attualmente in vigore per dati sensibili si intendono i dati che rivelino:
 \begin{itemize}
     \item l'etnia, pensiero politico, religioso o filosofico
