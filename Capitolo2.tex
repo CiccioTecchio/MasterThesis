@@ -1,18 +1,21 @@
-Per problemi di classificazione o di previsione vengono utilizzati diversi modelli di machine learning. In questa capitolo verranno descritti brevemete i metodi che verranno utilizzati.
+In questo capitolo si descrivono i metodi di machine learning utilizzati in questo lavoro (Sezione~\ref{sec:models}), quali metriche sono state utilizzate per misurarne le performance (Sezione~\ref{metrics}) ed infine si mostra una paronamica sulle tecniche di embedding focalizzando l'attenzione sul sentence embedding, una tecnologia emergente negli ultimi 5 anni (Sezione~\ref{sec:use}).
+
 \section{Modelli utilizzati}
+\label{sec:models}
 \subsection{Random Forest}
 \label{ssec:RF}
-Il Random Forest(RF) è un algoritmo di supervised classification che consiste in un insieme di metodi basati sul bagging\cite{Random Forest}; è stata usata l'implementazione di \textit{scikit-learn} combina gli alberi facendo la media della loro previsione probabilistica invece di lasciare che ogni albero voti per una singola classe, e supporta intrinsecamente problemi multi-classe.
-\subsection{Support Vector Machine}
-\label{ssec:SVM}
+Il Random Forest(RF) è un algoritmo di supervised classification che consiste in un insieme di metodi basati sul bagging\cite{Random Forest}; è stata usata l'implementazione di \textit{scikit-learn} che combina gli alberi facendo la media della loro previsione probabilistica invece di lasciare che ogni albero voti per una singola classe, e supporta intrinsecamente problemi multi-classe come quelli che vedremo nel Capitolo~\ref{ch:method}.
 
-\subsection{MultiLayer Perceptron}
-\label{ssec:MLP}
-\section{Metriche}
+%\subsection{Support Vector Machine}
+%\label{ssec:SVM}
+
+%\subsection{MultiLayer Perceptron}
+%\label{ssec:MLP}
+\section{Metriche per valutazione delle performance}
 \label{metrics}
 Esistono diverse metriche per valutare i punteggi dei modelli di machine learning. In questo lavoro sono state utilizzate le seguenti metriche:
 
-\begin{enumerate}
+\begin{itemize}
     \item \textbf{accuracy}: frazione delle predizioni corretta fatte dal nostro modello, essa è definita come segue
     \begin{equation*} accuracy = \dfrac {(tp + tn)}{(tp + tn + fp + fn)}\end{equation*} 
     dove $tp$, $fn$, $fp$ e $tn$ sono rispettivamente il numero di veri positivi, falsi negativi, falsi positivi, veri negativi
@@ -30,11 +33,11 @@ Esistono diverse metriche per valutare i punteggi dei modelli di machine learnin
        F_1score = 2 * \frac{(precision * recall)}{(precision + recall)}
     \end{equation}
     possiamo dire di avere un buon classificatore quando abbiamo una alta accuracy e una bassa recall
-    \item \textbf{roc-auc}: The AUC rappresenta l'area sotto la curva (Area Under the Curve) ROC (Receiver Operating Characteristic)~\cite{RocAUC}. La curva ROC, il modo più comune per valutare le performance di classificatori binari, è creata tracciando su di un piano cartesiano i veri positivi e i falsi positivi. I valori di roc auc variano tra 0 e 1, dove 1 rappresenta il perfetto accuracy score.
-\end{enumerate}
+    \item \textbf{roc-auc}: l'AUC rappresenta l'area sotto la curva (Area Under the Curve) ROC (Receiver Operating Characteristic)~\cite{RocAUC}. La curva ROC, il modo più comune per valutare le performance di classificatori binari, è creata tracciando su di un piano cartesiano i veri positivi e i falsi positivi. I valori di roc auc variano tra 0 e 1, dove 1 rappresenta il classificatore perfetto.
+\end{itemize}
 
-\section{Universal Sentence Encoder}
-\label{ssec:use}
+\section{Tecniche di embedding per NLP}
+\label{sec:use}
 Nell'ambito del'Natural Language Processing sono state introdotte diverse tecniche per comprendere il significato di una parola o di una frase con lo scopo di rispondere a delle domande ~\cite{wu2017visual} alla sentiment analysis ~\cite{kaur2017survey} e altro ancora.
 
 Negli ultimi anni, il word embedding si è affermato come uno dei metodi di rappresentazione più popolari~\cite{bengio2003neural,collobert2008unified,turian2010word}.
@@ -52,16 +55,15 @@ Una applicazione del sentence embedding può essere vista inn~\cite{iyyer2015dee
 
 {\tt FastText}~\cite{joulin2016fasttext}, definito e sviluppato dagli stessi autori di {\tt Word2vec}, ha innescato l'esposione della ricerca sullo universal word embeddings. Il miglioramento principale di {\tt FastText} sull'originale {\tt Word2vec} è l'inclusione di n-grammi, che permettono di calcolare le rappresentazioni delle parole per le parole che non sono apparse nei dati di formazione (parole \quotes{fuori dal vocabolario}).
 
-In questo senso, Google ha sviluppato un proprio sentence embedder, chiamato {\tt Universal Sentence Encoder}, che è in grado di gestire un gran numero di compiti nell'elaborazione del linguaggio naturale~\cite{USE}. In primo luogo, lo hanno sviluppato in lingua inglese, e in secondo luogo, hanno ampliato tale metodo per la contabilità di più di dieci lingue, tra cui italiano, tedesco, spagnolo, ecc~\cite{yang2019multilingue}, e lo hanno reso disponibile su Tensorflow Hub\footnote{\url{https://bit.ly/36BSS52}}. Questa versione multilingua effettua l'embed del testo da 16 lingue in un unico spazio semantico utilizzando un doppio encoder multitasking addestrato che impara le rappresentazioni legate utilizzando, a sua volta, compiti di bridge basati sulla traduzione. L'Universal Sentence Encoder ha dimostrato di mostrare buone prestazioni con una quantità minima di allenamento supervisionato~\cite{USE}; prende in input un testo di lunghezza variabile, e l'uscita è un vettore di 512 dimensioni. In questo lavoro, è stato usato il multilingual Universal Sentence Encoder per effettuare l'embedding di frasi scritte in linguaggio naturale al fine di addestrare un classificatori in grado di riconoscere i topic a cui appartiene la frase e dei classificatori in grado di riconoscere la sensibilità della frase appartenente al topic.
+In questo senso, Google ha sviluppato un proprio sentence embedder, chiamato {\tt Universal Sentence Encoder}, che è in grado di gestire un gran numero di compiti nell'elaborazione del linguaggio naturale~\cite{USE}. In primo luogo, lo hanno sviluppato in lingua inglese, e in secondo luogo, hanno ampliato tale metodo per la contabilità di più di dieci lingue, tra cui italiano, tedesco, spagnolo, ecc~\cite{yang2019multilingue}, e lo hanno reso disponibile su Tensorflow Hub\footnote{\url{https://bit.ly/36BSS52}}. Questa versione multilingua effettua l'embed del testo da 16 lingue (arabo, cinese-semplificato, cinese-tradizionale, francese, inglese, italiano, giapponese, coreano, olandese, polacco, portoghese, spagnolo, tailandese, turco, russo, tedesco) in un unico spazio semantico utilizzando un doppio encoder multitasking addestrato che impara le rappresentazioni legate utilizzando, a sua volta, compiti di bridge basati sulla traduzione. L'Universal Sentence Encoder ha dimostrato di mostrare buone prestazioni con una quantità minima di allenamento supervisionato~\cite{USE}; prende in input un testo di lunghezza variabile, e l'uscita è un vettore di 512 dimensioni. 
 
-
-Universal Sentence Encoder(USE) è un encoder che trasforma del testo scritto in linguaggio naturale in un vettore di 512 elementi, questo encoder può essere usato per task di text classification, semantic similarity, clustering e altri task riguardanti l'ambito dell'analisi del testo scritto in linguaggio naturale.\newline
-Nel seguente esempio viene mostrato il funzionamento di USE, egli prende in input un testo scritto in linguaggio naturale, codifica la frase in un array di 512 numeri reali, infine è stata misurata la similarità semantica delle frasi codificate.
+Questo encoder può essere usato per task di text classification, semantic similarity, clustering e altri task riguardanti l'ambito dell'analisi del testo scritto in linguaggio naturale.\newline
+In Figura~\ref{fig:my_label} viene mostrato il funzionamento di USE, egli prende in input un testo scritto in linguaggio naturale, codifica la frase in un array di 512 numeri reali, infine è stata misurata la similarità semantica delle frasi codificate utilizzando l'inner product tra gli embed. La similarità $s \in [0..1]$ è tanto più alta quanto più simili le frasi. 
 \begin{figure}[h]
     \centering
-    \includegraphics [scale=0.4]{Figure/use.png}
-    \caption{Esempio funzionamento USE}
+    \includegraphics [scale=0.33]{Figure/use.png}
+    \caption{Esempio funzionamento Universal Sentence Encoder: le frasi vengono trasformate in vettori a lunghezza fissa, per valutarne la similarità si può banalmente calcolare l'inner-product di tutte le coppie e mostrarlo in una matrice.}
     \label{fig:my_label}
 \end{figure}
 \FloatBarrier
-USE ha vari tipo di encoder, quello utilizzato in questo lavoro è un encoder multilingua che supporta 16 lingue diverse(arabo, cinese-semplificato, cinese-tradizionale, francese, inglese, italiano, giapponese, coreano, olandese, polacco, portoghese, spagnolo, tailandese, turco, russo, tedesco). In questo modo il nostro i modelli che verranno addestrati saranno in grado di riconoscere dati sensibili scritti nelle 16 lingue indicate in precedenza.
+In questo lavoro, è stato usato il multilingual Universal Sentence Encoder per effettuare l'embedding di frasi scritte in linguaggio naturale al fine di addestrare un classificatori in grado di riconoscere i topic a cui appartiene la frase e dei classificatori in grado di riconoscere la sensibilità della frase appartenente al topic.

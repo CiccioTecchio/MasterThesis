@@ -1,21 +1,19 @@
 \section{Contesto}
-Da una decina d'anni a questa parte gli OSN sono sempre più presenti nella vita di milioni di persone, siamo arrivati al punto che una singola persona possiede anche più tipi di social network e su ognuno di questi pubblica dei contenuti diversi. Questo fa si che su queste piattaforme viaggi una enorme mole di informazioni che potevano essere rivenduta dai proprietari degli OSN al miglior offerente come ad esempio è accaduto nello scandalo Cambrige Analytica.\footnote{\url{https://en.wikipedia.org/wiki/Facebook-Cambridge_Analytica_data_scandal}}\newline
-Al fine di tutelare i dati che gli utenti condividono con il loro passaggio online il 25 maggio del 2018 è entrata in vigore la normativa europea sulla protezione dei dati personali meglio nota come regolamento GDPR.\footnote{\url{https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679&from=EN\#d1e40-1-1}}
-Questa normativa limita il commercio dei dati ma di certo non impedisce agli utenti di pubblicare su un OSN informazioni sensibili in maniera volontaria o involontaria su se stesso o, peggio ancora, su altri. A tal proposito Mao et al. \cite{looseTweets} hanno condotto uno studio quantitativo su Twitter, lo studio ha rivelato che nei tweet sono presenti molti dati personali non solo riguardanti l'autore del tweet ma anche di terzi. In seguito Aylin et al.\cite{privacyDetective} hanno cercato di capire quanto siano sensibili le informazioni contenute nei tweet attribuendo a questi un \textbf{privacy score}, esso poteva essere di tre tipi:
-\begin{enumerate}
-    \item il tweet non contiene informazioni private
-    \item il tweet può contenere informazioni private
-    \item il tweet contiene informazioni private
-\end{enumerate}
-Questo studio si è concluso con il 10.37\% dei tweet collezionati ha un privacy score di tipo 1, il 21.11\% di tipo e il restante 68.52\% è di tipo 3.
-Infine Qiaozhi et al. \cite{dontTweetThis} hanno cercato di fornire un' ulteriore misura della sensibilità presente nei vari tweet raccolti, le misure che hanno fornito sono i \textbf{privscore} essi si dividono in tre categorie
-\begin{enumerate}
-    \item liberi da contesto, un tweet che contiene un dato sensibile
-    \item consapevoli del contesto, a seconda del contesto scritto nel tweet un dato può essere sensibile o meno
-    \item personalizzati, a seconda della cronologia dei tweet fatti da un utente un dato può essere sensibile o meno
-\end{enumerate}
+Da una decina d'anni a questa parte gli OSN sono sempre più presenti nella vita di milioni di persone, siamo arrivati al punto che una singola persona possiede anche più tipi di social network e su ognuno di questi pubblica contenuti diversi. Questo fa si che su queste piattaforme viaggi una enorme mole di informazioni e spesso queste informazioni pubblicate sugli OSN possono contenere informazioni sensibili e/o personali proprie o di terzi. 
+
+Quando gli utenti di un OSN si registrano ad esso questi stanno affidando alla piattaforma alla quale si iscrivono la loro anagrafica e molte altre informazioni che possono contribuire alla identificazione univoca dell'individuo. A gestori degli OSN viene affidato il compito di manutenere e di tenere al sicuro i dati che l'utente gli affida. Purtroppo sono stati riportati dei casi in cui delle falle di sicurezza presenti in alcuni OSN abbiano portato al furto di molti account(e ai dati ad esso connessi).
+
+\subsection{Alcuni casi di furto di informazioni}
+\paragraph{AOL search data leak}\cite{aolDataLeak}
+Nel 2006 la compagnia internet AOL pubblica un grande numero di ricerche fatte dagli utenti. Le ricerche pubblicate da AOL erano anonime ma, molte di queste, contenevano informazioni personali sensibili.
+Partendo da queste ricerche, il \textit{New York Times} è stato in grado di risalire a molte delle persone che avevano effettuato quelle ricerche.
+
+\paragraph{Myspace account leakage}\cite{myspacebreach}
+Nel 2016 sono stati trovati 360 milioni di account myspace in vendita sul deep web. I dati comprendevamo mail, password, username di una parte degli utenti create prima del giugno 2013
+
 
 \section{Cos'è Knoxly}
+\label{sec:whoisKnoxly}
 Knoxly (Figura \ref{fig:logoKnoxly}) si prefigge come obiettivo quello di aiutare gli utenti ad avere una maggiore consapevolezza
 dei dati che pubblicano/condividono sul Web , dato che il principale rischio per la privacy online è la divulgazione di
 informazioni personali e sensibili degli stessi utenti.\newline
@@ -31,6 +29,9 @@ Spesso gli utenti degli OSN divulgano anche senza la piena consapevolezza dati s
 A differenza dei convenzionali meccanismi di protezione della privacy sui dati o sui OSN, che si focalizzano principalmente sulla protezione dell’identità o di attributi privati \cite{collective-data, diff-privacy, urwho, inferr-privacy, protection-private, stalking}, Knoxly si muove verso l’idea di \quotes{\textit{privacy as having the ability to control the dissemination of sensitive information}}.
 
 Attualmente i limiti di Knoxly sono quelli intrinsechi ad una analisi lessicale. Per questa ragione, in questo lavoro verrà aggiunto un modulo semantico in grado di capire se un testo scritto da un utente contenga o meno dati sensibili e/o personali.
+
+\section{Il modello di minaccia}
+Knoxly mira a proteggere gli utenti del Web dalla diffusione accidentale di qualsiasi contenuto inappropriato, in particolare le informazioni private o sensibili su se stessi. Si considera principalmente il rischio di una diffusione inappropriata a due tipo di pubblico: (1) follower o amici, che ricevono aggiornamenti dei post dell'utente; (2) staker esterni, che sbirciano nei post dei social network di un utente target. È probabile che entrambi conoscano l'identità offline dell'utente. Knoxly non impedisce all'utente di pubblicare i contenuti(sensibili) nè impedisce al destinatario di visualizzare i contenuti, fornendo privacy awareness. L'idea di Knoxly parte dal presupposto che dei tracciatori possono esplorare l'OSN attraverso l'interfaccia utente o raccogliere dati utilizzando un crawler automatizzato tramite l'API dell'OSN di riferimento. Infine, non considera la retrazione/cancellazione dei post precedenti, nè li analizza.
 
 \section{Obiettivi del lavoro}
 Questo lavoro si prefigge l'obiettivo di aggiungere a Knoxly una intelligenza artificiale(IA) in grado di poter riconoscere un dato sensibile, di segnalare all'utente la presenza di questo dato e di dare la possibilità all'utente di inviare un feedback all'IA in modo tale che essa possa imparare a riconoscere quali sono i dati sensibili secondo l'utente che sta utilizzando il plugin.

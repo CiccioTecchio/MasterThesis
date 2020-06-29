@@ -1,14 +1,13 @@
-\subsection{Matrici di similarità}
-\label{ssec:mtrsim}
-Si ipotizza che le frasi appartenenti allo stesso topic siano simili fra loro. Per verificare questa ipotesi è stato selezionato un campione random di 5 frasi per ogni topic, è stato effettuato l'embed delle frasi e poi fatto l'inner product degli embed.
+
+È stato utilizzato mUSE di Google (vedi Sezione~\ref{sec:use}), perchè si ipotizza che le frasi appartenenti allo stesso topic siano simili fra loro e di conseguenza anche i vettori risultanti dall'operazione di embedding saranno simili. Per verificare questa ipotesi è stato selezionato un campione {\tt random} di 5 frasi per ogni topic, è stato effettuato l'embed delle frasi e poi calcolato l'inner product degli embed. L'inner product è una tecnica molto semplice per comprendere la similarità tra due vettori. Il valore di similarità $s \in [0..1]$, dove $1$ indica frasi / vettori identiche / ci, $0$ indica completa dissimilarità, quindi più il valore è vicino a $1$ più le / i frasi / vettori sono simili.
 
 Di seguito vengono mostrate le metrici di similarità ottenute dell'inner product. Si può notare che le matrici di similarità con i valori più alti sono:
 \begin{itemize}
-    \item politics(fig.\ref{fig:mtrsim_p}): con valori che vanno da 0.63 a 1
-    \item job(fig.\ref{fig:mtrsim_j}): con valori che vanno da 0.72 a 1
-I restanti invece presentano valori di similarità molto più bassi.
+    \item politics (Fig.\ref{fig:mtrsim_p}): con valori che vanno da 0.63 a 1
+    \item job (Fig.\ref{fig:mtrsim_j}): con valori che vanno da 0.72 a 1
+\textbf{I restanti invece presentano valori di similarità molto più bassi.}
 
-Infine è stata realizzata una matrice che metteva insieme tutti i vari topic per vedere quanto le frasi appartenenti a diversi topic si somigliassero. Il risultato è mostrato in fig.(\ref{fig:mtrsim_mix} dove si può notate che le celle colorate con toni chiari(valori superiori a 0.5) siano ottenute dalla intersezione di frasi appartenenti allo stesso topic, mentre, le celle colorate con topi scuri(valori inferiori al 0.5) siano data della intersezione di frasi appartenenti a topic diversi.
+Infine, è stata realizzata una matrice che mette insieme le frasi scelte dai vari topic per valutare quanto le frasi appartenenti a diversi topic si somigliassero (differiscano tra loro in questo caso). Il risultato è mostrato in Fig.~\ref{fig:mtrsim_mix} dove si può notare che le celle colorate con toni chiari (valori superiori a 0.5) siano ottenute dalla intersezione di frasi appartenenti allo stesso topic, mentre, le celle colorate con toni scuri (valori inferiori al 0.5) siano date dell'inner product di frasi appartenenti a topic diversi.
 \end{itemize}
 \begin{figure}[h!t]
     \centering

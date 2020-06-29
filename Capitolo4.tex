@@ -1,19 +1,27 @@
-L'obiettivo di questo lavoro è dotare Knoxly di un modulo intelligente capace di comprendere la semantica di un testo scritto in linguaggio naturale. (parla di argomenti potenzialmente sensibili?~\cite{dataspectrum}), comprendere se il testo che si sta per divulgare sul Web contiene dati sensibili o personali (l'utente sta divulgando la propria opinione politica?~\cite{}) ed inviare una notifica all' (privacy awareness), ed adattarsi alle esigenze dell'utente (alcuni utenti, es. esercenti fisici, potrebbero non essere interessati a ricevere notifiche riguardo la possibile divulgazione della loro location).
-Per realizzare il core intelligente di Knoxly è stata seguita una metodologia che si suddivide nelle seguenti fasi:
+\label{ch:method}
+L'obiettivo di questo lavoro è dotare Knoxly di un modulo intelligente capace di comprendere la semantica di un testo scritto in linguaggio naturale (il testo parla di argomenti potenzialmente sensibili?~\cite{}), comprendere se il testo che si sta per divulgare sul Web contiene dati sensibili o personali~\cite{dataspectrum} (l'utente sta divulgando la propria opinione politica?~\cite{}), inviare - nel caso - una notifica all'utente (privacy awareness), ed adattarsi alle esigenze dell'utente (alcuni utenti, es. esercenti fisici, potrebbero non essere interessati a ricevere notifiche riguardo la possibile divulgazione della loro location). Alla luce degli obiettivi, ci si è mossi verso tecniche basate su Intelligenza Artificiale che si sono mostrate utili in svariati contesti simili (si faccia riferimento, ad esempio, a~\cite{dontTweetThis}).
+
+Per realizzare il core intelligente di Knoxly è stata seguita una metodologia che si suddivide nelle seguenti fasi (vedi Figura~\ref{fig:wholemethod}):
 \begin{itemize}
-    \item Data collection (Sezione~\ref{datacollection}): raccolta data e pre-processing dei dati
-    \item Topic classification (Sezione~\ref{sec:topicclass}): realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza
-    \item Sensitivity classification (Sezione~\ref{sec:sensclass}): realizzare un modello che data una frase è in grado di capire quanto essa sia sensibile
-    \item Personalized sensitivity classification (Sezione~\ref{sec:pres_sens_class}): realizzare un modello in grado di capire quali siano i dati sensibili per un utente
+    \item Data collection (Sezione~\ref{datacollection}): individuazione, raccolta e pre-processing dei dati;
+    \item Topic classifier (Sezione~\ref{sec:topicclass}): realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza;
+    \item Sensitiveness classifier (Sezione~\ref{sec:sensclass}): realizzare un modello che data una frase è in grado di capire quanto essa sia sensibile;
+    \item Customized sensitiveness classifier (Sezione~\ref{sec:pres_sens_class}): realizzare un modello in grado di capire quali siano i dati sensibili per un utente.
 \end{itemize}
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/grafici/wholemethodology_cropped.pdf}
+    \caption{Principali fasi della metodolgia adottata: (1) \textit{Data collection}, individuazione, raccolata e pre-processing dei dati utili alle fasi successive; \textit{(2) Topic classifier}, realizzare una modello che data una frase è in grado di riconoscere il topic di appartenenza; \textit{(3) Sensitiveness classifier}, realizzare un modello che data una frase è in grado di capire se contiene dati potenzialmente personali e sensibili; \textit{(4) Customized sensitiveness classifier}, realizzare un modello in grado di capire quali sono i dati sensibili per un utente adattandosi alla sua percezione di privacy.}
+    \label{fig:wholemethod}
+\end{figure}
 
 \section{Data collection}
 \label{datacollection}
-Per creare il dataset che verrà utilizzato per addestrare l'IA bisogna come prima cosa raccogliere i dati raw (non elaborati).
-I topic sono stati individuati in base a quanto detto nel paragrafo~\ref{ssec:sensitive_data} .
+La prima fase del lavoro consiste nel collezionare i dati utili agli step successivi. Per creare il dataset su cui verranno addestrati i modelli di (a) \textit{Topic classifier}, (b) \textit{Sensitiveness classifier} e (c) \textit{customized sensitiveness classifier}, bisogna come prima cosa raccogliere i dati raw (non elaborati).
+Sulla base di quanto spiegato nella sezione~\ref{ssec:sensitive_data} sono stati individuati quattro topic di particolare interesse: politica, viaggi, salute, lavoro, come fatto anche in~\cite{}.
 
-
-Una volta definiti i topic è stato effettuato il download di dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} i quali dopo una fase di preprocessing sono stati uniti in un unico dataset raw. Nella tabella~\ref{tbl:ds_scelti} vengono mostrati i dataset selezionati per ogni topic con il relativo numero di elementi e il link per scaricarlo:
+Una volta definiti i topic, sono stati individuati dei dataset opportuni. In particolare, è stato effettuato il download di dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} i quali dopo una fase di pre-processing sono stati uniti in un unico "dataset raw". Nella tabella~\ref{tbl:ds_scelti} vengono mostrati i dataset selezionati per ogni topic con il relativo numero di elementi e il link per scaricarlo.
 
 
 \begin{table}[h]
@@ -36,13 +44,13 @@ Una volta definiti i topic è stato effettuato il download di dataset messi a di
     \end{tabular}
     }
 \end{center}
-\caption{dataset scelti per ogni topic}
+\caption{Dataset scelti su Kaggle.com per ogni topic d'interesse.}
 \end{table}
 \FloatBarrier
 
-Si è deciso di introdurre un topic che chiameremo \quotes{General} il quale ci servirà per aumentare l'eterogeneità dei dati, creando rumore. È chiaro che un modello di machine learning basato solo sui topic potenzialmente ricchi di dati sensibili e personali, classificherebbe qualsiasi testo in una delle categorie individuate: ciò genererebbe dei falsi positivi perchè esistono dei testi che non ricadono in nessuna delle categorie tra health, politics, job e travel. Nel topic \quotes{General} sono contenute delle trame di film: sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili e personali riguardo i personaggi.
+Si è deciso di introdurre un topic che chiameremo \quotes{General} il quale ci servirà per aumentare l'eterogeneità dei dati, creando rumore. È chiaro che un modello di machine learning basato solo sui topic potenzialmente ricchi di dati sensibili e personali, classificherebbe qualsiasi testo in una delle categorie individuate: ciò genererebbe misclassification perchè esistono dei testi che non ricadono in nessuna delle categorie tra health, politics, job e travel. Nel topic \quotes{General} sono contenute delle trame di film: sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili e personali riguardo i personaggi.
 
-I dataset scelti sono composti da file {\tt .csv}, essi presentano diverse colonne alcune di queste irrilevanti per questo lavoro.
+I dataset scelti sono salvati come file {\tt .csv}: essi presentano diverse colonne, alcune di queste irrilevanti ai fini di questo lavoro.
 
 Di seguito verranno elencati i file scelti e le colonne selezionate che comporranno il dataset
 
@@ -58,46 +66,105 @@ Job & {\tt amazon\_jobs\_dataset.csv} & \begin{tabular}[c]{@{}l@{}}description,\
 Travel & {\tt Tweets.csv} & text \\ \hline
 General & {\tt movie\_metadata.csv} & overview \\ \hline
 \end{tabular}
-\caption{file e colonne selezionate dai dataset di kaggle}
+\caption{File e colonne (col. scelta) selezionate dai dataset di Kaggle}
 \end{table}
 \FloatBarrier
 
-\section{Preprocessing sui raw data}
+\section{Pre-processing sui raw data}
 \label{sec:preprocessingraw}
-I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una pulizia di questi dati.\newline
-Dai vari subset ricavati dai dataset originali di kaggle sono state eliminate le righe che contenevano un testo di lunghezza inferiore ai 3 caratteri e che non erano in lingua inglese. La fase language detection è stata fata utilizzando la libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.\newline
-Si è notato che i testi risultano essere particolarmente lunghi (lunghezza media degli annuci è di 968, SD=788.40) e ciò può rappresentare un problema di conformità rispetto gli altri dataset considerati. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro, questa operazione è stata fatta utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}}. 
+I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una "pulizia" di questi dati.
 
-Come ultima cosa dal testo contenuto in ogni riga è stata rimossa la punteggiatura, terminata questa fase i vari dataset processati sono pronti per essere uniti ed etichettati.
+Dai vari subset ricavati dai dataset originali di Kaggle sono state eliminate le righe che contenevano un testo di lunghezza $l<3$ caratteri e che non erano scritti in lingua inglese. La fase language detection è stata condotta utilizzando la libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.
+
+Si è notato che i testi nel dataset Job risultano essere particolarmente lunghi (lunghezza media degli annunci è di 968 caratteri, SD=788.40) e ciò può rappresentare un problema di conformità rispetto gli altri dataset considerati. Per ridurre le dimensioni delle singole entry appartenti alla categoria job si è deciso di dividere in varie parti l'annuncio di lavoro. Questa operazione è stata eseguita utilizzando il sentence splitter\footnote{\url{https://github.com/berkmancenter/mediacloud-sentence-splitter}}, fornito dai ricercatori Philipp Koehn e Josh Schroeder~\cite{}. 
+
+Terminata questa fase, i vari dataset processati sono pronti per essere uniti ed etichettati.
 
 \section{Topic classification}
 \label{sec:topicclass}
-
+Il primo obiettivo del lavoro è la definizione ed implementazione di un modulo intelligente capace di comprendere la semantica di un testo scritto in linguaggio naturale, che sia in grado di capire di cosa l'utente sta parlando. A tal fine è stata seguita una metodologia che consta nelle seguenti fasi (vedi Figura~\ref{fig:topicmethod}):
 \begin{itemize}
-    \item Creazione del dataset(Sezione~\ref{ssec:createds}): realizzione del dataset utilizzato
-    \item Rapprezentazion del testo(Sezione~\ref{ssec:rappresentazione}): come è stata effettuata la conversione delle righe testuali del dataset in righe numeriche da dare in input al classificatore
-    \item Matrici di similarità(Sezione~\ref{ssec:mtrsim}:
-    rappresentazione grafica della similarità presente fra un campione di frasi appartenti al dataset
-    \item Text Labeling(Sezione~\ref{ssec:textlabeling}): le righe numeriche del dataset vengono etichettate in base al topic d'appartenenza
-    \item Validation(Sezione~\ref{ssec:validation_Topic}): validazione del modello realizzato
-    \item Testing(Sezione~\ref{ssec:testing_Topic}): testing del modello realizzato
-    \item Testing~\quotes{into the wild}(Sezione~\ref{ssec:testing_wild}): testiting delle performance del classificatore su un dataset più ampio
+    \item Creazione del dataset (Sezione~\ref{ssec:createds}): si illustra (a) la/e tecnica/che utilizzate per la conversione dei testi del dataset in vettori di numeri reali (sample) da dare in input al classificatore, (b) la strategia di labeling dei sample; 
+    \item Validation (Sezione~\ref{ssec:validation_Topic}): validazione del modello realizzato utilizzando la k-fold cross-validation;
+    \item Testing (Sezione~\ref{ssec:testing_Topic}): testing delle performance del metodo sul test set;
+    \item Testing~\quotes{into the wild} (Sezione~\ref{ssec:testing_wild}): ulteriore testing delle performance del metodo, su un dataset molto più ampio.
 \end{itemize}
 
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/grafici/topicmethod_cropped.pdf}
+    \caption{Principali fasi per la creazione del modulo Topic Classifier: (\textit{Embedding}) le frasi dei vari dataset vengono trasformate in vettori a lunghezza fissa; (\textit{Automatic Labeling}) in base al dataset di provenienza ciascun sample (embedding) viene etichettato automaticamente; (\textit{Validation}) mediante una k-fold cross-validation si validano vari classificatori basati sul supervised learning e si effettua il tuning degli iper-parametri utilizzando il training set $trs$; (\textit{Testing}) una volta ottenuti i migliori parametri per ciascun classificatore, si effettua il testing sul test set $tss$; (\textit{Testing "into the wild"}) si effettua un ulteriore testing su nuovi dati.}
+    \label{fig:topicmethod}
+\end{figure}
 
 \subsection{Creazione del dataset}
 \label{ssec:createds}
-Una volta ultimata la fase di pre-processing i dati sono stati uniti in unico dataset composto da 2426861 elementi. Successivamente si è passati alla fase di rappresentazione del testo (Sezione~\ref{ssec:rappresentazione}) e labeling (Sezione~\ref{ssec:textlabeling}).
+Una volta ultimata la fase di pre-processing i dati sono stati uniti in unico dataset composto da 2426861 elementi. Successivamente si è passati alla fase di rappresentazione del testo (Sezione~\ref{sssec:rappresentazione}) e labeling (Sezione~\ref{sssec:textlabeling}).
 
 
 
-\subsection{Rappresentazione del testo}
-\label{ssec:rappresentazione}
-Per rappresentare i testi è stato utilizzato Universal Sentence Encoder (vedi Sezione~\ref{ssec:use})che permette di rappresentare una frase scritta in linguaggio naturale in un vettore a lunghezza fissa, nello specifico 512 elementi.
+\subsubsection{Rappresentazione del testo}
+\label{sssec:rappresentazione}
+Per rappresentare i testi è stato utilizzato mUSE di Google (vedi Sezione~\ref{sec:use}), perchè si ipotizza che le frasi appartenenti allo stesso topic siano simili fra loro e di conseguenza anche i vettori risultanti dall'operazione di embedding saranno simili. Per verificare questa ipotesi è stato selezionato un campione {\tt random} di 5 frasi per ogni topic, è stato effettuato l'embed delle frasi e poi calcolato l'inner product degli embed. L'inner product è una tecnica molto semplice per comprendere la similarità tra due vettori. Il valore di similarità $s \in [0..1]$, dove $1$ indica frasi / vettori identiche / ci, $0$ indica completa dissimilarità, quindi più il valore è vicino a $1$ più le / i frasi / vettori sono simili.
 
+Di seguito vengono mostrate le matrici di similarità ottenute dell'inner product. Si può notare che le matrici di similarità con i valori più alti sono politics (Figura~\ref{fig:mtrsim_p}) - con valori che vanno da 0.63 a 1 -, job (Figura~\ref{fig:mtrsim_j}) - con valori che vanno da 0.72 a 1.
+\textbf{I restanti invece presentano valori di similarità molto più bassi.}
 
-Abbiamo effettuato l'embed di tutti gli elementi presenti in \textit{ds1000.csv}, quindi ogni riga - testi appartenenti ai diversi topic - sarà composta da un vettore di 512 elementi
+Infine, è stata realizzata una matrice che mette insieme le frasi scelte dai vari topic per valutare quanto le frasi appartenenti a diversi topic si somigliassero (differiscano tra loro in questo caso). Il risultato è mostrato in Figura~\ref{fig:mtrsim_mix} dove si può notare che le celle colorate con toni chiari (valori superiori a 0.5) siano ottenute dalla intersezione di frasi appartenenti allo stesso topic, mentre, le celle colorate con toni scuri (valori inferiori al 0.5) siano date dell'inner product di frasi appartenenti a topic diversi.
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/politics.pdf}
+    \caption{matrici di similarità delle frasi appartenenti al topic politics}
+    \label{fig:mtrsim_p}
+\end{figure}
 \FloatBarrier
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/health.pdf}
+    \caption{matrici di similarità delle frasi appartenenti al topic health}
+    \label{fig:mtrsim_h}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/work.pdf}
+    \caption{matrici di similarità delle frasi appartenenti al topic job}
+    \label{fig:mtrsim_j}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/fly.pdf}
+    \caption{matrici di similarità delle frasi appartenenti al topic travel}
+    \label{fig:mtrsim_t}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/movie.pdf}
+    \caption{matrici di similarità delle frasi appartenenti al topic general}
+    \label{fig:mtrsim_g}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics{Figure/simMatr/mixed.pdf}
+    \caption{matrici di similarità delle frasi appartenenti ai diversi topic}
+    \label{fig:mtrsim_mix}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{Text labeling}
+\label{sssec:textlabeling}
+\textbf{DIRE QUALCOSA SUL LABELING CHE è AUTOMATICO PERCHè IMPLICITO.}
+
+
 \begin{table}[h!t]
 \centering
 \begin{tabular}{|c|c|}
@@ -109,10 +176,10 @@ Job{[}512{]} & 2 \\ \hline
 Travel{[}512{]} & 3 \\ \hline
 General{[}512{]} & 4 \\ \hline
 \end{tabular}
+\label{}
+\caption{}
 \end{table}
 Le frasi di cui è stato fatto l'embed vengono salvate nella struttura \textit{X\_embed}.
-
-\input{CommentMtrTopic}
 
 \subsection{Validation}
 \label{ssec:validation_Topic}
@@ -125,7 +192,7 @@ Tale fase è stata sfruttata anche per l'hyper-parameter tuning usando il metodo
 In questo lavoro sono stati usati i più popolari modelli di machine learning disponibili in letteratura e implementati in scikit-learn. Questi sono il Random Forest(Sezione~\ref{ssec:RF}), Support Vector Machine(Sezione~\ref{ssec:SVM}), MultiLayer Perceptron(Sezione~\ref{ssec:MLP}) .
 
 
-Le performance dei classificatori sono state valutate con le più popolari metrice (ved Sezioine~\ref{metrics}).
+In questa fase si è tentato di massimizzare il parametro F-score (vedi Sezione~\ref{metrics}), impostando oppurtunamente {\tt scoring} di {\tt GridSearchCV}.
 
 Per ogni modello, sono stati valutati i seguenti hyper-parameters:
 
@@ -186,7 +253,7 @@ Il \textit{TopicClassifier} basato su RF così addestrato è stato dumpato in un
 
 \subsection{Testing \textit{into the wild}}
 \label{ssec:testing_wild}
-\textit{TopicClassifier} è stato oggetto di una ulteriore fase di testing. Si è pensato di misurare le performance del classificatore su un dataset molto più ampio, rinominato \quotes{wild dataset}. Wild dataset è composto da 2000 elementi per ciascun topic/cateogria (politics, health, job, travel e general) non appartenenti al dataset di addestramento.
+\textit{TopicClassifier} è stato oggetto di una ulteriore fase di testing. Si è pensato di misurare le performance del classificatore su un dataset molto più ampio, rinominato \quotes{wild dataset}. Wild dataset è composto da 2000 elementi per ciascun topic/categoria (politics, health, job, travel e general) non appartenenti al dataset di addestramento nè a quello di testing precedentemente visto.
 
 La tabella~\ref{tbl:testing_wild} riporta le misure ottenute dalla sperimentazione \textit{into the wild} di \textit{TopicClassifier}. 
 \begin{table}[h]
@@ -207,11 +274,12 @@ La tabella~\ref{tbl:testing_wild} riporta le misure ottenute dalla sperimentazio
 
 \section{Sensitivity classification}
 \label{sec:sensclass}
-Una volta ottenuto un classificatore in grado di riconoscere il topic d'appartenenza di un testo scritto in linguaggio naturale con riferimento ai quattro topic più citati nella letteratura sulla privacy, più un topic generico, il focus si sposta sul capire se una data frase appartente ad un topic specifico contenga o meno dati sensibili e/o personali. Ad esempio:
+Una volta ottenuto un classificatore in grado di riconoscere il topic d'appartenenza di un testo scritto in linguaggio naturale con riferimento ai quattro topic più citati nella letteratura sulla privacy, più un topic generico, il focus si sposta sul capire se una data frase (appartente ad un topic specifico) contenga o meno dati sensibili e/o personali. Un esempio di testo con contenuti sensibili e non sensibili è riportato in Tabella~\ref{tbl:example_sens}.
+
 \begin{table}[h]
 \label{tbl:example_sens}
 \centering
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{c|c|c}
 \hline
 \textbf{Frase} & \textbf{Topic} & \textbf{Sensibile} \\ \hline
 \textit{Questa notte non ho dormito} & Health & \textbf{No} \\ \hline
@@ -221,13 +289,20 @@ Una volta ottenuto un classificatore in grado di riconoscere il topic d'apparten
 \end{table}
 \FloatBarrier
 
-A tal fine, è stata definita una metologia come segue:
+A tal fine, è stata definita una metodologia come segue (vedi Figura~\ref{fig:methodsens}):
 \begin{itemize}
-    \item Creazione Dataset sensitivity(Sezione~\ref{ssec:create_sens_ds}: creazione del dataset da utilizzare durante la fase di labeling
-    \item Sensitiveness labeling(Sezione~\ref{ssec:sens_labeling}): vengono definite le regole per decidere se una frase contiene un contenuto sensibile o meno
-    \item Fase di labeling(Sezione~\ref{ssec: lbl_sens}: descrizione del dataset ottenuto dopo il labeling manuale
+    \item Creazione Dataset sensitivity (Sezione~\ref{ssec:create_sens_ds}: creazione di un 
+    \item Sensitiveness labeling (Sezione~\ref{ssec:sens_labeling}): vengono definite le regole per decidere se una frase contiene un contenuto sensibile o meno
+    \item Fase di labeling (Sezione~\ref{ssec: lbl_sens}: descrizione del dataset ottenuto dopo il labeling manuale
     \item Approcci per l'anasisi di sensitività(Sezione~\ref{ssec:approcci}): descrizione delle possibili implementazioni dell'analisi della sensitività
 \end{itemize}
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/grafici/sensitivenessmethod_cropped.pdf}
+    \caption{Principali fasi per la creazione del modulo Sensitiveness classifier: (\textit{Embedding}) le frasi dei vari dataset vengono trasformate in vettori a lunghezza fissa; (\textit{Expert labeling}) tramite una serie di regole ben definite~\cite{}, un esperto del dominio effettua manualmente il labeling dei sample; (\textit{Validation}) mediante una k-fold cross-validation si validano vari classificatori basati sul supervised learning e si effettua il tuning degli iper-parametri utilizzando il training set $trs'$; (\textit{Testing}) una volta ottenuti i migliori parametri per ciascun classificatore, si effettua il testing sul test set $tss'$;   }
+    \label{fig:methodsens}
+\end{figure}
 
 \subsection{Creazione Dataset sensitivity}
 \label{ssec:create_sens_ds}
@@ -249,8 +324,8 @@ Per la creazione di questo dataset abbiamo riutilizzato parte del {\tt ds1000.cs
 \end{table}
 \FloatBarrier
 
-\subsection{Sensitiveness labeling}
-\label{ssec:sens_labeling}
+\subsubsection{Sensitiveness labeling}
+\label{sssec:sens_labeling}
 In questa fase ds200.csv è stato etichettato secondo le regole delineate in~\cite{dataSpectrum}.
 \begin{figure}
     \centering
@@ -262,8 +337,9 @@ In questa fase ds200.csv è stato etichettato secondo le regole delineate in~\ci
 Le righe della tabella mostrate in figura~\ref{fig:sensRumbald} contengono la categoria a cui una frase può appartenere e quanto essa possa essere sensibile, il \textbf{livello di sensibilità} varia da 0(non sensibile) a 10(molto sensibile). I numeri presenti nelle celle variano da 0 a 4 ed essi rappresentano la \textbf{frequenza} che l'argomento descritto nella riga si presenti con il livello di sensibilità descritto nella colonna. Ad esempio prendiamo l'argomento \textit{Relating to object} esso ha un livello di sensibilità pari a 0 e nella cella viene riportato il numero 4, questo vuol dire che quando si parlerà di argomenti relativo ad oggetti questi saranno sicuramente poco sensibili.
 
 
-\subsubsection{Tabella delle sensibilità}
-In accordo allo studio fatto da Rumbal et al. è stata definita una tabella delle sensibilità a cui fare riferimento per determinare se un contenuto va etichettato come sensibile(1) o meno(0). I criteri definiti nella tabella~\ref{tbl:senstbl} sono stati ottenuti utilizzando il seguente metodo.
+%\subsubsection{Tabella delle sensibilità}
+%\label{ssec:tblSens&Euricstic}
+In accordo allo studio fatto da Rumbal et al.~\cite{dataSpectrum} è stata definita una tabella delle sensibilità a cui fare riferimento per determinare se un contenuto va etichettato come sensibile (1) o meno (0). I criteri definiti nella tabella~\ref{tbl:senstbl} sono stati ottenuti utilizzando il seguente metodo.
 
 Si definiscono $freq$ i valori di frequenza utilizzati da Rumbal et al. Sia $freq[i]$ il valore di frequenza per il livello di sensibilità $i$, $i\in[0..10]$.
 
@@ -279,9 +355,11 @@ Etichettiamo un elemento non sensibile se:
 \end{equation}
 
 Viceversa, se sensibile.
-Informalmente, si confronta la somma delle frequenze che hanno un livello di sensibilità compreso fra 0 e 4 con la somma delle frequenze che hanno un livello di sensibilità compreso fra 5 e 10. Se la somma delle frequenze che hanno un livello di sensibilità compreso fra 5 e 10 è maggiore rispetto alla somma delle frequenze che hanno un livello di sensibilità compreso fra 0 e 4 allora l'argomento risulta essere sensibile e i testi che appartengono a tale argomento verranno etichettati con 1, 0 altrimenti.
+
+Informalmente, si confronta la somma delle frequenze che hanno un livello di sensibilità compreso fra $0$ e $4$ con la somma delle frequenze che hanno un livello di sensibilità compreso fra $5$ e $10$. Se la somma delle frequenze che hanno un livello di sensibilità compreso fra $5$ e $10$ è maggiore rispetto alla somma delle frequenze che hanno un livello di sensibilità compreso fra $0$ e $4$ allora l'argomento risulta essere sensibile e i testi che appartengono a tale argomento verranno etichettati con $1$, $0$ altrimenti.
 
 \begin{table}[h]
+\centering 
 \begin{tabular}{|l|c|}
 \hline
 \multicolumn{1}{|c|}{\textbf{Regole}} & \textbf{Sensibile} \\ \hline
@@ -303,16 +381,12 @@ Dati relativi alla gravidanza & \cmark \\ \hline
 Dati relativi al gruppo etnico & \cmark \\ \hline
 Dati medici o stato di salute & \cmark \\ \hline
 \end{tabular}
-\caption{Tabella delle sensibilità}
+\caption{Regole per effettuare il labeling manuale. \cmark indica che una frase contenente quel dato è sensibile, \xmark viceversa.}
 \label{tbl:senstbl}
 \end{table}
 \FloatBarrier
 
-\subsection{Fase di labeling}
-\label{ssec: lbl_sens}
-Una volta dettate le regole per il labeling si è proceduto ad etichettare manualmente ogni singola entry come sensibile(1) o non sensibile(0).
-
-Una volta completata l'etichettatura abbiamo un certo numero di testi sensibili per ogni topic, questi numeri sono riportati nella tabella~\ref{tbl:ds200}. Il dataset contente testi, topic, sensibilità è stato chiamato  {\tt{ds200.csv}}.
+Una volta completata l'etichettatura abbiamo ottenuto un certo numero di testi sensibili per ogni topic. I principali dati di riferimento per questo dataset sono riportati nella tabella~\ref{tbl:ds200}. Il dataset contente testi, topic, sensibilità è stato chiamato {\tt{ds200.csv}}.
 
 \begin{table}[h]
 \centering
@@ -338,7 +412,7 @@ Per analizzare il livello di sensitività di una frase abbiamo individuato due p
     \item realizzare un singolo classificatore che è addestrato per riconoscere ed individuare se una frase contiene dati sensibili/personali o meno sull'intero dataset {\tt ds200.csv};
     \item realizzare 5 classificatori diversi, uno per ciascun topic, capaci di riconoscere ed individuare se una frase che parla di un certo argomento (cioè che appartiene ad uno dei topic di cui alla Sezione~\ref{sssec:multiclass}) contiene dati sensibili/personali o meno.
 \end{enumerate}
-Date le buone performance mostrate dalla classificazione per topic effettuata con il Random Forest(Sezione~\ref{sec:topicclass}), si è scelto di utilizzare Random Forest in entrambi gli approcci.
+Date le buone performance mostrate dalla classificazione per topic effettuata con il Random Forest (Sezione~\ref{sec:topicclass}), si è scelto di utilizzare Random Forest in entrambi gli approcci.
 
 \begin{figure}[h]
     \centering
@@ -353,6 +427,8 @@ Date le buone performance mostrate dalla classificazione per topic effettuata co
 \subsubsection{Approccio con il singolo classificatore}
 \label{sssec:singleclass}
 Con questo approccio viene realizzato un singolo classificatore in grado di riconosce frasi contenenti dati sensibili e/o personali. Il vantaggio è quello di avere un unico classificatore sensitività in grado di individuare contenuti sensibili, lo svantaggio è il fatto che questo tipo di classificatore ha una conoscenza a grana grossa della di un dato sensibile e quindi è facile che sbagli ad assegnare il grado di sensibilità.
+
+\textbf{INTRODURRE LA FASE DI VALIDAZIONE E QUELLA DI TESTING} 
 \begin{table}[h]
 \label{tbl:validation_sens}
 \centering
@@ -367,7 +443,7 @@ Con questo approccio viene realizzato un singolo classificatore in grado di rico
 517 & +/-0.057 & 0.847 \\ \hline
 1013 & +/-0.058 & 0.851 \\ \hline
 \end{tabular}
-\caption{risultati score ottenuti in  fase di validation}
+\caption{ROC AUC score ottenuti in fase di validation con Random Forest nel caso single-classifier.}
 \end{table}
 \FloatBarrier
 
@@ -382,7 +458,7 @@ Precision & 0.776 & 0.752 \\ \hline
 Recall & 0.769 & 0.760 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.848} \\ \hline
 \end{tabular}
-\caption{risultati score ottenuti in  fase di training}
+\caption{Performance del classificatore Random Forest ottenute nella fase di testing con approccio single-classifier.}
 \end{table}
 \FloatBarrier
 
@@ -586,43 +662,116 @@ Roc-Auc & \multicolumn{2}{c|}{0.736} \\ \hline
 
 Matrice di confusione~\ref{fig:mtrconf_sim_g}
 
-Dai risultati si evince che i classificatori di sensibilità singoli(tranne nel caso di general) sono più accurati rispetto al singolo classificatore di sensibilità. Quindi consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorati si è deciso di adottare la soluzione con 5 classificatori di sensibilità.
+Dai risultati si evince che i classificatori di sensibilità singoli (tranne nel caso di general) sono più accurati rispetto al singolo classificatore di sensibilità. Quindi consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorati si è deciso di adottare la soluzione con 5 classificatori di sensibilità.
 
 Quindi per dire quanto sia sensibile una frase(la sensibilità è un valore compreso fra 0 e 1 dove 0 vuol dire non sensibile 1 sensibilissimo) si seguiranno le seguenti frasi
 
-\section{Personalized sensitivity classification}
+\section{Customized sensitivity classification}
 \label{sec:pres_sens_class}
-La privacy è una percezione soggettiva, in cui ogni utente ha il proprio livello di tolleranza nella chiusura delle informazioni private. Ancora più importante, l'atteggiamento verso la privacy varia da un argomento all'altro. Per effettuare questa operazione esistono diverse tecniche ad esempio Q-learning\cite{q-learning} e vari tipi di reinforcement learning\cite{reinfoce-learn}, agenti basati su LSTM\cite{lstm} essi sono dei modelli sulla base dei feedback ricevuti dall'ambienti in cui sono in esecuzione, ad esempio, feedback di un utente è utile ad addestrare meccanismi di recommendation.
+La privacy è una percezione soggettiva, in cui ogni utente ha il proprio livello di riservatezza con riguardo alle proprie informazioni private. Ancora più importante, l'atteggiamento verso la privacy varia da un argomento all'altro. 
 
-Per catturare l'atteggiamento verso la privacy personale, è stato realizzato un modello \textit{online} di learning che in base alla percezione di sensibilità dell'utente sarà in grado di segnalare solo i contenuti che per quel singolo utente risultano sensibili.
+Ne deriva che la realizzazione di uno sistema che non tenga conto delle esigenze e preferenze degli utenti può risultare in uno strumento ostruente, fastidioso o addirittura inutile. Ragion per cui bisogna sviluppare uno strumento che in qualche modo si adatti alle esigenze e preferenze degli utenti. 
+
+Per effettuare questa operazione esistono diverse tecniche ad esempio Q-learning~\cite{q-learning} e vari tipi di reinforcement learning~\cite{reinfoce-learn}, agenti basati su LSTM Network~\cite{lstm}, e così via. Essi sono dei modelli che apprendono sulla base dei feedback ricevuti dall'ambiente in cui sono in esecuzione: ad esempio, il feedback di un utente è utile ad addestrare sistemi di recommendation.
+
+Per catturare l'atteggiamento degli utenti verso la privacy personale, è stato realizzato un modello \textit{online} di learning che in base alla percezione di sensibilità dell'utente sarà in grado di segnalare solo i contenuti che per quel singolo utente risultano sensibili.
 A tale scopo ci siamo ispirati al sistema di priority inbox di gmail~\cite{inbox}.
 Il sistema è in grado di capire quali mail secondo un utente hanno una priorità maggiore rispetto alle altre. Per realizzarlo, gli autori si sono basati sulle interazioni che gli utenti avevano con le mail in arrivo: ad esempio se una mail veniva aperta dopo più di sette giorni, allora non era una mail importante quindi a quella mail dovrebbe esser assegnata una bassa priorità.
 
-Questo scenario risulta abbastanza simile al nostro caso in quanto l'utente, interagendo con il modello online dovrebbe fornire feedback riguardo la sua personale percezione di privacy.
+Facendo un opportuno parallelismo, questo scenario risulta abbastanza simile al nostro caso, in quanto l'utente, interagendo con il modello online, dovrebbe fornire feedback riguardo la sua personale percezione di privacy.
 
 \subsection{Realizzazione}
-L'intezione è realizzare una IA lato client in grado di capire il livello di sensibilità dell'utente. La scelta di realizzare questa è IA lato client è obbligata dal momento che un tool per la prevenzione della privacy non deve violare la privacy per prevenirla. Per questo non può essere effettuata una classificazione lato server che comporterebbe privacy leakage verso first-part. Questo vincolo ci porta a dover realizzare un modello che sia \textit{leggero} in maniera tale che non rallenti la normale navigazione dell'utente sul web, e \textit{semplice} da implementare in \textit{JavaScript}. È stato scelto il Passive-Aggressive online learning method~\cite{PAalgo}. 
+L'intezione è realizzare un modello IA-based lato client in grado di capire il livello di sensibilità dell'utente. La scelta di realizzare questa è IA lato client è obbligata dal momento che un tool per la prevenzione della privacy non deve violare la privacy per prevenirla. Per questo non può essere effettuata una classificazione lato server che comporterebbe privacy leakage verso first-part. Questo vincolo ci porta a dover realizzare un modello che sia \textit{leggero} in maniera tale che non rallenti la normale navigazione dell'utente sul web, e \textit{semplice} da implementare in \textit{JavaScript}. È stato scelto il Passive-Aggressive online learning method~\cite{PAalgo}. Come funziona?
 
-Spiegazione del tizio sul sito... (mettere regola update)
+Supponiamo avere un dataset $D$
 
-L'idea è fornire all'utente un sistema già pre-addestrato che pian piano si adatti alle sue esigenze. Per questo scopo dobbiamo adottare una strategia di transfer-learning / multi-view learning\cite{transfer-learning}.
+$$D=\left\{
+                \begin{array}{ll}
+                  X=\{x_1,x_2,\dots ,x_t,\dots\}, x_i \in \mathbb{R}^n \\
+                  Y=\{y_1,y_2,\dots ,y_t,\dots\}, y_i \in \{-1,+1\}
+                \end{array}
+              \right.$$
 
-Si vuole addestrare il Customized Sensitiveness Classifier con una multi-view che include sia l'embed sia la valutazione del sensitiveness classifier. Abbiamo utilizzato in particolare la tecnica early integration. 
+L'indice $t$ è stato scelto per contrassegnare la dimensione temporale del problema. In questo caso, infatti, i campioni possono continuare ad arrivare per un tempo indefinito. Naturalmente, se sono tratti dalla stessa distribuzione generatrice di dati, l'algoritmo continuerà ad apprendere (probabilmente senza grandi modifiche ai parametri), ma se sono estratti da una distribuzione completamente diversa, i pesi verranno "dimenticati" lentamente a favore della nuova distribuzione. Nel nostro caso siamo su un problema di classificazione binaria (-1 dato non sensibile, 1 dato sensibile).
 
-La "early integration" consiste nel concatenare le caratteristiche associate all'embed e i risultati in probabilità ottenuti tramite SensitivenessClassifier; in questo modo ogni combinazione (concatenazione di due o più viste singole) rappresenta un campione nei set di dati. Quindi abbiamo ottenuto vettori da 514 elementi (512+2) dove i primi 512 elementi sono l'embed della fra e gli utilmi due sono la sensibilità negativa e la sensibilità positiva
+Dato un vettore di peso $w$, la previsione si ottiene semplicemente come:
+
+$$\tilde{y_t}=sign(w^T\cdot x_t)$$
+
+Questo algoritmo si basa sulla Hinge-loss function (la stessa utilizzata da SVM):
+
+$$L(\tilde{\theta})=max(0,1-y\cdot f(x_t,\theta))$$
+
+Il valore di $L$ è limitato tra $0$ (che significa corrispondenza perfetta) e $K$ a seconda di $f(x(t), \theta)$ con $K > 0$ (previsione completamente errata). Un algoritmo Passive-Aggressive funziona genericamente con questa regola di aggiornamento:
+
+$$\left\{
+                \begin{array}{ll}
+                  w_{t+1}=argmin_w\frac{1}{2}\| w-w_t\|^2 +C\xi^2\\
+                  L(w;x_t;y_t) < \xi
+                \end{array}
+              \right.$$
+              
+Per comprendere questa regola, supponiamo che la variabile di gioco $\xi = 0$ (e $L$ vincolata a $0$). Se viene presentato un campione $x(t)$, il classificatore utilizza il vettore di peso corrente per determinare il segno. Se il segno è corretto, la funzione loss è $0$ e l'argmin è $w(t)$. Ciò significa che l'algoritmo è passivo quando si verifica una classificazione corretta. Supponiamo ora che si sia verificata un'errata classificazione (vedi Figura~\ref{fig:PAII1}).            
+              
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{Figure/PAII1.png}
+    \caption{CAPTION}
+    \label{fig:PAII1}
+\end{figure}
+\FloatBarrier  
+
+L'angolo $\theta> 90$, pertanto, il prodotto punto è negativo e il campione è classificato come $-1$, tuttavia la sua etichetta è $+1$. In questo caso, la regola di aggiornamento diventa molto aggressiva, perché cerca un nuovo $w$ che deve essere il più vicino possibile al precedente (altrimenti la conoscenza esistente viene immediatamente persa), ma deve soddisfare $L = 0$ (in altre parole, la classificazione deve essere corretta).
+
+L'introduzione della variabile slack consente di avere margini "morbidi" (come in SVM) e un grado di tolleranza controllato dal parametro $C$. In particolare, la funzione di perdita deve essere $L \leq \xi$, consentendo un errore maggiore. Valori $C$ più alti producono una maggiore aggressività (con un conseguente rischio maggiore di destabilizzazione in presenza di rumore), mentre valori più bassi consentono un migliore adattamento. In effetti, questo tipo di algoritmi, quando si lavora online, deve far fronte alla presenza di campioni rumorosi (con etichette errate). È necessaria una buona robustezza, altrimenti cambiamenti troppo rapidi producono conseguenti tassi di classificazione errata più elevati.
+
+Dopo aver risolto entrambe le condizioni di aggiornamento, otteniamo la regola di aggiornamento:
+
+$$w_{t+1}=w_t+\frac{max(0,1-y_t(w^T\cdot x_t)}{\|x_t\|^2+\frac{1}{2C}}$$ 
+
+Questa regola conferma le aspettative: il vettore di peso viene aggiornato con un fattore il cui segno è determinato da $y(t)$ e la cui grandezza è proporzionale all'errore. Nota che se non c'è classificazione errata il nominatore diventa $0$, quindi $w(t + 1) = w(t)$, mentre, in caso di classificazione errata, $w$ ruoterà verso $x(t)$ e si fermerà con una perdita $L \leq \xi$. Nella figura~\ref{fig:PAII2} successiva, l'effetto è stato contrassegnato per mostrare la rotazione, tuttavia è normalmente il più piccolo possibile.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{Figure/PAII2.png}
+    \caption{CAPTION}
+    \label{fig:PAII2}
+\end{figure}
+\FloatBarrier  
+
+
+Dopo la rotazione, $\theta <90$ il prodotto punto diventa negativo, quindi il campione è correttamente classificato come $+1$.
+
+L'idea è fornire all'utente un sistema già pre-addestrato che pian piano si adatti alle sue esigenze. Per questo scopo dobbiamo adottare una strategia di transfer-learning / multi-view learning\cite{transfer-learning} (vedi Figura~\ref{fig:approccisens}.
+
+Si vuole addestrare il Customized Sensitiveness Classifier con una multi-view che include sia l'embed (single-view) sia la valutazione del sensitiveness classifier (single-view). Abbiamo utilizzato in particolare la tecnica \textit{early integration}. 
+
+La "early integration" consiste nel concatenare le view singole cioè le caratteristiche associate all'embed e i risultati in probabilità ottenuti tramite il Topic-specific Sensitiveness Classifier; in questo modo ogni combinazione (concatenazione di due o più viste singole) rappresenta un campione nei set di dati. Quindi abbiamo ottenuto vettori da 514 elementi (512+2) dove i primi 512 elementi sono l'embed della frase e gli ultimi due sono la probabilità associata alla sensibilità negativa e la sensibilità positiva, rispettivamente.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=15cm]{Figure/grafici/customized_cropped.pdf}
-    \caption{schema}
+    \caption{schema riassuntivo del funzionamento del Customized Sensitiveness classifier}
     \label{fig:approccisens}
 \end{figure}
 \FloatBarrier
 
-prendiamo ds200
-lo dividiamo in 80 e 20
-faccio training di PA-II su 80
-faccio testing su 20
-Ottengo risultato tabella.
+\subsection{Validation}
+Abbiamo utilizzato i dataset ds200 visti in Sezione~\ref{} integrati con la valutazione del Topic-specific Sensitiveness Classifier di riferimento. Quindi il dataset ds200 relativo al topic Health viene integrato con la valutazione di Health Sensitiveness classifier e così via per tutti gli altri.
+I dataset sono stati suddivisi, con un approccio stratificato, in un 80\% per il training ed un 20\% per il testing utilizzando la funzione {\tt train\_test\_split} di scikit-learn per Python. Successivamente, il training set è stato oggetto di una 10-fold cross-validation con il metodo {\tt GridSearchCV} in cui abbiamo cercato di ottimizzare il parametro di aggressività $C$. Si osservi però che questo parametro è in realtà molto user-based, ragion per cui il miglior metodo per stimarlo potrebbe essere effettuando uno studio sugli utenti: è possibile che questi preferiscano un classificatore molto aggressivo o, al contrario, siano soddisfatti maggiormente con un apprendimento più lento e graduale. I valori di $C$ provati sono i seguenti: 0.001, 0.01, 0.1, 1, 10, 100. I risultati di questa fase possono essere visti in Tabella~\ref{}. Il miglior parametro è risultato essere per tutti i casi, $C=0.01$.
 
-Figo
+\subsection{Testing}
+Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200. I risultati di questa fase possono essere trovati in Tabella~\ref{}. Si nota come CONTINUARE
+
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{5}{|c|}{\textbf{Accuracy}} \\ \hline
+\textbf{Politics} & \textbf{Health} & \textbf{Job} & \textbf{Travel} & \textbf{General} \\ \hline
+0.835 & 0.98 & 0.95 & 0.975 & 0.965 \\ \hline
+\end{tabular}
+\caption{Tabella delle accuracy ottenute dal Customized Sensitiveness Classifier sui vari topic}
+\end{table}
+\FloatBarrier
