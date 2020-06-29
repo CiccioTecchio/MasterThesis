@@ -1,3 +1,48 @@
+In letteratura il problema affrontato in questa tesi è stato toccato da diversi contributi. In questo capitolo si illustrano due articoli molto correlati al lavoro qui presentato. Uno dei primi studi che ha riguardato il livello di privacy leakage contenuto nei mesaggi di testo divulgati in rete e più nello specifico su quelli divulgati su Twitter, viene condotto da Mao et al.~\cite{looseTweets}. In questo lavoro i ricercatori hanno cercato di categorizzare la natura dei leak nelle seguenti categorie:
+\begin{itemize}
+    \item leak provenienti da tweet di utenti in stato di ebrezza
+    \item leak provenienti da tweet che rivelano i piani vacanze degli utenti
+    \item leak provenienti da tweet che rivelano le informazioni mediche degli utenti
+\end{itemize}
+Per categorizzare la natura dei tweet verrà realizzato un classificatore in grado di rilevare i tweet affetti da leakage e infine viene effettuato uno studio comparativo per vedere quali argomenti sensibili vengono trattati in diverse nazioni.
+
+La metodologia utilizzata da Mao et al.~\cite{looseTweets} per raggiungere i proprio obiettivi è la seguente
+Inizialmente è stato realizzato un dataset contente i tweet presi dalla stream di Twitter nel periodo che va da gennaio a settembre 2010, una volta raccolti i tweet nel dataset questo è stato filtrato eliminando dal dataset di partenza i tweet che non contenevano le parole più ricorrenti trattate nelle categorie sopracitate. 
+
+Utilizzando naive Bayes e SVM viene relizzato un classificatore in grado di rilevare la presenza di un leak in un tweet. Grazie ad esso è stato possibile effettuare una analisi comparativa per vedere quali argomenti vengono trattati principalmente nei testi affetti da leakage. I risultati sono i seguenti: in Figura~\ref{fig:res-ebbrezza} si mostrano i principali argomenti trattati nei tweet affetti da leak. Si nota come il 25\% riguardi "comportamenti irrispettosi".
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/related_work/ebbrezza.png}
+    \caption{argomenti trattati nei tweet fatti da utenti in stato di ebbrezza. Dati estrapolati da\cite{looseTweets}}
+    \label{fig:res-ebbrezza}
+\end{figure}
+\FloatBarrier
+
+In Figura~\ref{fig:res-patologie} si mostrano le patologie di cui maggiormente si parla nei tweet affetti da leak. Notiamo come, nel campione analizzato, più del 60\% dei tweet che trattano di salute vertano su \quotes{cancro}.
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/related_work/patologie.png}
+    \caption{patologie contenute nei tweet che parlano di salute. Dati estrapolati da\cite{looseTweets}}
+    \label{fig:res-patologie}
+\end{figure}
+\FloatBarrier
+
+Infine i ricercatori hanno voluto effettuare una analisi comparativa andando a vedere quali patologie venivano trattate nei tweet riguardanti la categoria salute in tre diverse nazioni (Figura~\ref{fig:res-patologie-nazioni}). In tutte le nazioni considerate, USA, UK, Singapore la patologia più discussa è sempre il \quotes{cancro}.
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/related_work/nazioni.png}
+    \caption{patologie contenute nei tweet che parlano di salute. Dati estrapolati da\cite{looseTweets}}
+    \label{fig:res-patologie-nazioni}
+\end{figure}
+\FloatBarrier
+
+
+Fra le limitazioni di questo studio troviamo: (a) il modello realizzato non viene integrato in un tool, e/o messo a disposizione degli utenti finali, (b) la selezione dei testi che possono appartenere ad una categoria viene effettuata sulla base di keyword (non si tiene conto della semantica).
+
+
+\begin{comment}
 Al fine di tutelare i dati che gli utenti condividono con il loro passaggio online il 25 maggio del 2018 è entrata in vigore la normativa europea sulla protezione dei dati personali meglio nota come regolamento GDPR.\footnote{\url{https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679&from=EN\#d1e40-1-1}}
 Questa normativa limita il commercio dei dati ma di certo non impedisce agli utenti di pubblicare su un OSN informazioni sensibili in maniera volontaria o involontaria su se stesso o, peggio ancora, su altri. A tal proposito Mao et al. \cite{looseTweets} hanno condotto uno studio quantitativo su Twitter, lo studio ha rivelato che nei tweet sono presenti molti dati personali non solo riguardanti l'autore del tweet ma anche di terzi. In seguito Aylin et al.\cite{privacyDetective} hanno cercato di capire quanto siano sensibili le informazioni contenute nei tweet attribuendo a questi un \textbf{privacy score}, esso poteva essere di tre tipi:
 \begin{enumerate}
@@ -12,3 +57,4 @@ Infine Qiaozhi et al. \cite{dontTweetThis} hanno cercato di fornire un' ulterior
     \item consapevoli del contesto, a seconda del contesto scritto nel tweet un dato può essere sensibile o meno
     \item personalizzati, a seconda della cronologia dei tweet fatti da un utente un dato può essere sensibile o meno
 \end{enumerate}
+\end{comment}

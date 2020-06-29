@@ -48,7 +48,8 @@ L'invio della frase al server avviene tramite una chiamata {\tt AJAX} verso l'en
 
 La User Interface (UI) di Knoxly è stata progettata ed implementata per fornire privacy awareness in modo semplice ed intuitivo. Come anticipato in Sezione~\ref{sec:whoisKnoxly} Knoxly evidenzia contenuti sensibili e/o personali presenti in un testo scritto in italiano o in inglese tramite l'utilizzo di espressioni regolari e dizionari. Utilizziamo il \textit{giallo} per i quasi identifier~\cite{} e dati sensibili, il \textit{rosso} per i dati personali. 
 
-Cliccando sull'icona posta accanto alla barra dell'indirizzo su Google Chrome, viene visualizzato il popup di Knoxly. Accanto all'icona è possibile inoltre visualizzare un badge che riporta un contatore numerico (vedi Figura~\ref{}). Tale contatore è utilizzato per segnalare all'utente il numero di frasi scritte classificate come minacce per la sua privacy, cioè sensibili. 
+Cliccando sull'icona posta accanto alla barra dell'indirizzo su Google Chrome, viene visualizzato il popup di Knoxly. Accanto all'icona è possibile inoltre visualizzare un badge che riporta un contatore numerico (vedi Figura~\ref{fig:uiKnoxly}). Tale contatore è utilizzato per segnalare all'utente il numero di frasi scritte classificate come minacce per la sua privacy, cioè sensibili. 
+
 
 \begin{figure}[h]
     \centering
@@ -65,13 +66,21 @@ In Figura~\ref{fig:uiKnoxly} viene mostrata la landing page una volta aperto il 
     \item \textbf{About}: pagina dedicata ad istruzioni sull'utilizzo di Knoxly.
 \end{itemize}
 
-\textbf{Analysis} è composta da una tabella con 3 colonne. Mostra le frasi che Knoxly reputa sensibili, indicando una icona facente riferimento al topic a cui appartiene la frase che può avere due colori: \textit{giallo} nel caso in cui la frase risulti sensibile (sensibilità positiva compresa fra $0.36$ e $0.68$) o \textit{rosso} nel caso in cui la frase abbia una sensibilità positiva maggiore o uguale a $0.68$. Inoltre viene mostrato anche il bottone \textbf{feedback} che consente all'utente di inviare un feedback a Knoxly per far si che il tool non segnali più come sensibili frasi simili a quella per cui si sta inviando il feedback.
+\textbf{Analysis} è composta da una tabella con tre colonne. Mostra le frasi che Knoxly reputa sensibili, indicando una icona facente riferimento al topic a cui appartiene la frase che può avere due colori: \textit{giallo} nel caso in cui la frase risulti sensibile (sensibilità positiva compresa fra $0.36$ e $0.68$) o \textit{rosso} nel caso in cui la frase abbia una sensibilità positiva maggiore o uguale a $0.68$. Inoltre viene mostrato anche il bottone \textbf{feedback} che consente all'utente di inviare un feedback a Knoxly per far si che il tool non segnali più come sensibili frasi simili a quella per cui si sta inviando il feedback.
 
-Le icone scelte per fornire consapevolezza sono mostrate in Figura~\ref{}. Sono stati utilizzati i colori \textit{rosso} e \textit{giallo} 
+Le icone scelte per fornire consapevolezza sono mostrate in Figura~\ref{fig:bollini}. Sono stati utilizzati i colori \textit{rosso} e \textit{giallo}, in quanto il colore rosso è il colore maggiormente utilizzato per definire un pericolo/rischio, mentre, il colore giallo è il colore maggiormente utilizzato per definire l'avviso\quotes{avviso}.
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[scale=0.7]{Figure/ui/bollini.png}
+    \caption{icone presenti in Knoxly}
+    \label{fig:bollini}
+\end{figure}
+\FloatBarrier
 
-La sezione \textbf{Statistics} (vedi Figura~\ref{fig:statKnoxly} è dedicata alle misurazioni: l'utente può visualizzare un grafico a barre che riporta il numero di occorrenze di frasi sensibili che lui ha divulgato in rete nei vari topic, politica, salute, viaggi, lavoro e general. Al di sotto del grafico a barre l'utente può visualizzare l'\textbf{overall score} della sensibilità dei contenuti che divulga in rete. L'overall score $s$ viene calcolato con il seguente algoritmo 
 
-L'overall score non è altro che il calcolo online della media degli score di sensibilità ottenuti per ciascuna delle frasi che ha divulgato, con riferimento alle sole frasi classificate sensibili. $s \in [0..1]$ e viene rappresentato come un cerchio che si colora di rosso se l'overall score supera 0.68 altrimenti è mostrato in giallo. 
+La sezione \textbf{Statistics} (vedi Figura~\ref{fig:statKnoxly} è dedicata alle misurazioni: l'utente può visualizzare un grafico a barre che riporta il numero di occorrenze di frasi sensibili che lui ha divulgato in rete nei vari topic, politica, salute, viaggi, lavoro e general. Al di sotto del grafico a barre l'utente può visualizzare l'\textbf{overall score} della sensibilità dei contenuti che divulga in rete. L'overall score $s$ viene calcolato come la media aritmetica delle sensibilità date alle frasi ritenute sensibili da Knoxly.
+
+L'overall score non è altro che il calcolo online della media degli score di sensibilità ottenuti per ciascuna delle frasi che ha divulgato, con riferimento alle sole frasi classificate sensibili. Lo score $s \in [0..1]$ e viene rappresentato come un cerchio che si colora di rosso se l'overall score supera 0.68 altrimenti è mostrato in giallo. 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.7]{Figure/ui/statistics.png}
@@ -80,7 +89,8 @@ L'overall score non è altro che il calcolo online della media degli score di se
 \end{figure}
 \FloatBarrier
 
-Infine nella sezione \textbf{About}(figura \ref{fig:about}) vengono riportate le informazioni riguardanti i bollini che fanno riferimento ai topic di Knoxly.
+Infine nella sezione \textbf{About} (vedi Figura \ref{fig:about}) vengono riportate le informazioni riguardanti le metafore visuali adottate, con particolare focus sulle icone utilizzate per ciascun topic.
+
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.7]{Figure/ui/about.png}
@@ -88,8 +98,9 @@ Infine nella sezione \textbf{About}(figura \ref{fig:about}) vengono riportate le
     \label{fig:about}
 \end{figure}
 \FloatBarrier
-La UI di Knoxly è stata realizzata utilizzando Bootstrap\footnote{https://getbootstrap.com/}, e Highcharts\footnote{https://www.highcharts.com/} per i grafici.
+
+La UI di Knoxly è stata realizzata utilizzando Bootstrap\footnote{\url{https://getbootstrap.com/}}, e Highcharts\footnote{\url{https://www.highcharts.com/}} per i grafici.
 
 \section{Server-side}
 \label{sec:backend}
-Il lato server di Knoxly è molto semplice esso è stato realizzato in Flask\footnote{https://flask.palletsprojects.com/en/1.1.x/} ed è composto da un unico end point, questo riceve la frase del client, effettua l'embed utilizzando USE, chiama il Topic classifier e in base al topic individuato chiama il Sensitiveness classifier di competenza, dopodichè invia l'embed con accodato il vettore contenente la sensibilità negativa e positiva al client affichè questo possa valutare se la frase risulta sensibile anche per la percezione di privacy che ha l'utente.
+Il lato server di Knoxly è molto semplice: esso è stato realizzato in Flask\footnote{\url{https://flask.palletsprojects.com/en/1.1.x/}} ed è composto da un unico end point. Quest'ultimo riceve il testo dal client, effettua l'embed utilizzando mUSE, chiama il Topic classifier e in base al topic individuato chiama il Sensitiveness classifier di competenza, dopodichè invia l'embed con accodato il vettore contenente la sensibilità negativa e positiva al client affichè questo possa valutare se la frase risulta sensibile anche per la percezione di privacy che ha l'utente.

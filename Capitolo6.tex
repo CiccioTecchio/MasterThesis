@@ -3,7 +3,7 @@ In questo capitolo verrà spiegata come è stata effettuata la valutazione delle
 
 \section{Metodologia utilizzata}
 \label{sec:metodologiaevaluation}
-L'analisi qualitativa e qualitativa è state effettuata cercando di calare quanto più possibile il plug-in in un contesto reale. Per fare cioè esso doveva effettuare le sue predizioni su degli input che non aveva mai visto. A tal fine è stato scelto da \href{https://www.kaggle.com/}{kaggle.com} il dataset {\tt Sentiment140 dataset with 1.6 million tweets }\cite{sentiment140} dalla quale sono state selezionate le prime 500 entry.
+L'analisi qualitativa e qualitativa è state effettuata cercando di calare quanto più possibile il plug-in in un contesto reale. Per fare cioè esso doveva effettuare le sue predizioni su degli input che non aveva mai visto. A tal fine è stato scelto da \href{https://www.kaggle.com/}{kaggle.com} il dataset {\tt Sentiment140 dataset with 1.6 million tweets }\cite{sentiment140} dalla quale sono state selezionate 500 entry con una funzione {\tt random}.
 
 Per inviare le 500 entry al backend di Knoxly è stato realizzato un bot con \href{https://selenium-python.readthedocs.io/}{Selenium with Python}. Esso interagisce con una pagina web e inviava la frase al backend secondo i criteri definiti  dall'euristica per l'invio della frase(Sez. \ref{sec:frontend}).
 
