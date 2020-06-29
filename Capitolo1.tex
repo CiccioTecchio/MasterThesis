@@ -1,16 +1,50 @@
 \section{Contesto}
-Da una decina d'anni a questa parte gli OSN sono sempre più presenti nella vita di milioni di persone, siamo arrivati al punto che una singola persona possiede anche più tipi di social network e su ognuno di questi pubblica contenuti diversi. Questo fa si che su queste piattaforme viaggi una enorme mole di informazioni e spesso queste informazioni pubblicate sugli OSN possono contenere informazioni sensibili e/o personali proprie o di terzi. 
+Da una decina d'anni a questa parte gli OSN sono sempre più presenti nella vita di milioni di persone, siamo arrivati al punto che una singola persona possiede anche più tipi di social network e su ognuno di questi pubblica contenuti diversi. Questo fa si che su queste piattaforme viaggi una enorme mole di informazioni. A tal proposito è stato dimostrato, che su una sessione di navigazione che comprendeva
+un insieme di azioni tipiche di un utente (accesso a social network, ricerche,
+posting di commenti, ecc), Google Analytics raccoglieva circa l’87\% dei dati
+personali e sensibili disponibili\cite{MalandrinoScarano}
+
+Spesso queste informazioni pubblicate sugli OSN possono contenere informazioni sensibili e/o personali proprie o di terzi. 
 
 Quando gli utenti di un OSN si registrano ad esso questi stanno affidando alla piattaforma alla quale si iscrivono la loro anagrafica e molte altre informazioni che possono contribuire alla identificazione univoca dell'individuo. A gestori degli OSN viene affidato il compito di manutenere e di tenere al sicuro i dati che l'utente gli affida. Purtroppo sono stati riportati dei casi in cui delle falle di sicurezza presenti in alcuni OSN abbiano portato al furto di molti account(e ai dati ad esso connessi).
 
 \subsection{Alcuni casi di furto di informazioni}
-\paragraph{AOL search data leak}\cite{aolDataLeak}
+\label{ssec:exampleLeak}
+\textbf{1. AOL search data leak}\cite{aolDataLeak}\newline
 Nel 2006 la compagnia internet AOL pubblica un grande numero di ricerche fatte dagli utenti. Le ricerche pubblicate da AOL erano anonime ma, molte di queste, contenevano informazioni personali sensibili.
-Partendo da queste ricerche, il \textit{New York Times} è stato in grado di risalire a molte delle persone che avevano effettuato quelle ricerche.
 
-\paragraph{Myspace account leakage}\cite{myspacebreach}
-Nel 2016 sono stati trovati 360 milioni di account myspace in vendita sul deep web. I dati comprendevamo mail, password, username di una parte degli utenti create prima del giugno 2013
+Partendo da queste ricerche, il \textit{New York Times} è stato in grado di risalire a molte delle persone che avevano effettuato quelle ricerche.\newline
+\textbf{2. Myspace account leakage}\cite{myspacebreach}\newline
+Nel 2016 sono stati trovati 360 milioni di account myspace in vendita sul deep web. I dati comprendevamo mail, password, username di una parte degli utenti create prima del giugno 2013.\newline
+\textbf{3. Cambridge Analytica}\cite{cambridge}\newline
+Nel 2018 viene rivelato che la società di consulenza politica Cambridge Analytica aveva raccolto i dati di milioni di utenti Facebook e li ha usati per scopi di propaganda politica.
 
+I dati raccolti da Cambridge Analytica sono stati utilizzati per la campagna elettorale di Donald Trump, Brexit, e le elezioni messicane del 2018.\newline
+\textbf{4. Caso Renzi Formigli}\cite{formigli}\newline
+In questo caso non c'è un colosso della IT che per una falla di sicurezza perde le informazioni sensibili dei sui utenti ma una persona che rivela in maniera indiretta dati sensibili di una terza.
+
+Il giornalista e conduttore televisiovo Corrado Formigli intervista il senatore della Repubblica Matteo Renzi in merito al prestito che gli era stato fatto da un suo amico per l’acquisto di una villa.
+
+
+Durante la trasmissione il conduttore mostra le foto della villa, poche ore dopo il termine della trasmissione su Facebook compaiono post che parlano e mostrano la casa del giornalista.
+
+\section{Privacy leakage}
+\label{sec:privacyLeakage}
+Nella sezione \ref{ssec:exampleLeak} sono stati illustrati alcuni esempi di \textbf{privacy leakage}, ovvero, contenuti sensibili o inappropriati che gli utenti stessi, inconsapevolmente o involontariamente, divulgano durante l'utilizzo dei social o altri servizi (es. e-mail).I contenuti possono riguardare la propria vita privata o quella altrui.
+
+\section{Norme per tutelare la privacy degli utenti}
+Per migliorare e regolamentare la gestione dei dati sensibili e personali sul web la Commissione Europea ha iniziato ad aggiornare le regole in ambito privacy dal 2016, concentrandosi sul controllo della diffusione dei dati e sul conoscere da \textit{chi} e \textit{come}, questi vengano trattati.
+
+La normativa europea GDPR(General Data Protection Regulation)\footnote{https://gdpr-info.eu/} definisce come \textit{dati personali} le informazioni che identificano o rendono identificabile, direttamente o indirettamente, una persona fisica e che possono fornire informazioni sulle sue caratteristiche, le sue abitudini, il suo stile di vita le sue relazioni personali, il suo stato di salute, la sua situazione economica, ecc.
+
+Il GDPR quindi riduce il rischio di uso improprio e violazioni della privacy,
+causate intenzionalmente o per mancanza di consapevolezza.
+
+Inoltre la Convenzione 108\footnote{https://www.coe.int/en/web/data-protection/convention108/modernised} e il Regolamento Europeo prevedono che i dati devono
+essere conservati per un periodo di tempo limitato, e in particolare non
+oltre il tempo necessario per raggiungere lo scopo alla base del trattamento.
+Nel caso in cui un titolare del trattamento volesse mantenerli per un periodo
+superiore, deve procedere alla loro anonimizzazione.
 
 \section{Cos'è Knoxly}
 \label{sec:whoisKnoxly}
