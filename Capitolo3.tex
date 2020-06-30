@@ -41,6 +41,41 @@ Infine i ricercatori hanno voluto effettuare una analisi comparativa andando a v
 
 Fra le limitazioni di questo studio troviamo: (a) il modello realizzato non viene integrato in un tool, e/o messo a disposizione degli utenti finali, (b) la selezione dei testi che possono appartenere ad una categoria viene effettuata sulla base di keyword (non si tiene conto della semantica).
 
+Nel lavoro di Mao et al.\cite{looseTweet} vengono per la prima volta individuate delle categorie di dati che si ritengono sensibili, alcune di queste categorie saranno presenti anche in studi successivi. Come nello studio di Qiaozhi et al.\cite{dontTweetThis} dove i ricercatori hanno proposto un modello quantitativo consapevole del contesto per la valutazione delle informazioni sensibili, andando così a definire una misura della sensibilità di un contenuto il \textbf{privscore}. Questo studio analizza i tweet che appartengono ad alcune categorie sensibili presenti anche in\cite{looseTweet} come i tweet che rivelano informazioni mediche e i tweet che parlano di droga e alcol, e ne aggiunge anche altre quali tweet che parlano di politica, oscenità, razzismo e informazioni personali o familiari.
+
+In questo studio vengono proposti diversi tipi di \textbf{privscore}:
+\begin{itemize}
+    \item \textbf{Contex-free}: privscore che tiene conto della sensibilità del testo basandosi solo ed esclusivamente sul contenuto testuale
+    \item \textbf{Contex-aware}: privscore che tiene conto del contesto in cui viene scritto un contenuto. Questo score integrato con il Context-free privscore ci consente di capire l’influenza sociale sulla percezione della privacy
+    \item \textbf{Personalized}: privscore associato ad una frase conoscendo la percezione della privacy che ha l'utente che la sta scrivendo
+    \item \textbf{Personalized Contex-Aware}: privscore associato ad una frase tenendo conto del contesto in cui essa viene scritta e della percezione di privacy che ha l'utente
+\end{itemize}
+
+Per realizzare un modello quantitativo consapevole del contesto per la valutazione delle informazioni sensibili i ricercatori hanno usato uno \quotes{Urban dictionary} contenente le parole più utilizzate nelle diverse categorie al fine di selezionare solo i tweet che contenessoro parole presenti nello \quotes{Urban Dictionary}. Così facendo è stato realizzato un dataset composta da 8079 tweet, in seguito tutti questi tweet sono stati etichettati con un valore che va da 1 a 5 (1 non sensibile 5 molto sensibile) dagli Amazon Turker(AMT).\footnote{https://www.mturk.com/}
+
+
+\begin{figure}[h!t]
+    \centering
+    \includegraphics[width=15cm]{Figure/related_work/mtd-dontTweet.png}
+    \caption{metodologia applicata per realizzare i vari privscore. Dati estrapolati da\cite{dontTweetThis}}
+    \label{fig:mtd-dontTweetThis}
+\end{figure}
+\FloatBarrier
+
+In Figura \ref{fig:mtd-dontTweetThis} vi è rappresentata la metodologia seguita in \cite{dontTweetThis}.
+
+\begin{enumerate}
+\item [A.]ai Turker è stato sottomesso un questionario per capire le loro opinioni sui dati sensibili
+\item [B.]le risposte del questionario sono state analizzate per capire la percezione della privacy
+\item [C.]in base ai risultati ottenuti viene sviluppato un modello di deep learning con word embedding per sviluppare il contex-free Priv Score
+\item [D.]Viene analizzata la storia dei tweet fatti dall’utente per capire le sue preferenze in termini di privacy
+\item [E.]Analisi del contesto sociale utilizzando il volume, la durata e la rilevanza di un trend topic. 
+\item [F.]in base all' analisi fatta al punto D viene sviluppato un nuovo modello che integra le preferenze in termini di privacy dell'utente con il contex-free privscore
+\item [G.]Il volume e la rilevanza dei trend topic è stata integrata con il context-free privscore al fine di mostrare la percezione della privacy da parte della società
+\item [H.]Eventualmente gli studiosi svilupperanno un modello in grado di integrare il risultato del modello Personalized Privacy Score con il risultato del modello Context-aware Privacy Score al fine di realizzare un modello per il Personalized Context-aware score. Ovvero un modello in grado di riconoscere un contenuto sensibile basandosi sulla percezione della privacy che ha la società ma che tiene anche conto della percezione della privacy che ha l'utente.
+
+Fra le limitazioni di questo studio c'è il fatto che l'accuratezza dei vari modelli può essere aumentata aumentando la quantità di dati annotati. Purtroppo il modello è fine a se stesso in quanto esso non viene integrato in un tool utilizzabile per fare analisi Infine fra le limitazioni c'è anche il fatto che sono stati utilizzati gli Amazon Turker per il labeling
+\end{enumerate}
 
 \begin{comment}
 Al fine di tutelare i dati che gli utenti condividono con il loro passaggio online il 25 maggio del 2018 è entrata in vigore la normativa europea sulla protezione dei dati personali meglio nota come regolamento GDPR.\footnote{\url{https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679&from=EN\#d1e40-1-1}}

@@ -7,7 +7,7 @@ L'analisi qualitativa e qualitativa è state effettuata cercando di calare quant
 
 Per inviare le 500 entry al backend di Knoxly è stato realizzato un bot con \href{https://selenium-python.readthedocs.io/}{Selenium with Python}. Esso interagisce con una pagina web e inviava la frase al backend secondo i criteri definiti  dall'euristica per l'invio della frase(Sez. \ref{sec:frontend}).
 
-Durante l'invio delle frasi il backend registra tempo(in secondo), RAM utilizzata e CPU utilizzata, mentre, il backend misura RAM e CPU utilizzata con e senza l'utilizzo di Knoxly.
+Durante l'invio delle frasi il backend registra (i) tempo (in secondi), (ii) RAM utilizzata (in Megabytes) e (iii) CPU utilizzata (in percentuale dove ogni thread utilizzato a pieno corrisponde al 100\%\footnote{Una macchina con 2 core, 4 thread può avere un consumo di CPU massimo del 400\%.}), mentre, il backend misura (i) RAM (in Megabytes) e (ii) CPU utilizzata (in percentuale) con e senza l'utilizzo di Knoxly.
 
 Infine i risultati vengono raccolti e mostrati sotto forma di grafici e matrici.
 

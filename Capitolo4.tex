@@ -259,7 +259,7 @@ La tabella~\ref{tbl:testing_wild} riporta le misure ottenute dalla sperimentazio
 Una volta ottenuto un classificatore in grado di riconoscere il topic d'appartenenza di un testo scritto in linguaggio naturale con riferimento ai quattro topic più citati nella letteratura sulla privacy, più un topic generico, il focus si sposta sul capire se una data frase (appartente ad un topic specifico) contenga o meno dati sensibili e/o personali. Un esempio di testo con contenuti sensibili e non sensibili è riportato in Tabella~\ref{tbl:example_sens}.
 
 \begin{table}[h]
-\label{tbl:example_sens}
+
 \centering
 \begin{tabular}{c|c|c}
 \hline
@@ -268,15 +268,15 @@ Una volta ottenuto un classificatore in grado di riconoscere il topic d'apparten
 \textit{Soffro di insonnia} & Health & \textbf{Sì} \\ \hline
 \end{tabular}
 \caption{esempio di contenuti sensibili e non}
+\label{tbl:example_sens}
 \end{table}
 \FloatBarrier
 
 A tal fine, è stata definita una metodologia come segue (vedi Figura~\ref{fig:methodsens}):
 \begin{itemize}
-    \item Creazione Dataset sensitivity (Sezione~\ref{ssec:create_sens_ds}: creazione di un 
-    \item Sensitiveness labeling (Sezione~\ref{ssec:sens_labeling}): vengono definite le regole per decidere se una frase contiene un contenuto sensibile o meno
-    \item Fase di labeling (Sezione~\ref{ssec: lbl_sens}: descrizione del dataset ottenuto dopo il labeling manuale
-    \item Approcci per l'anasisi di sensitività(Sezione~\ref{ssec:approcci}): descrizione delle possibili implementazioni dell'analisi della sensitività
+    \item Creazione Dataset sensitivity (Sezione~\ref{ssec:create_sens_ds}): rappresentazione dei sample e labeling dei dati;
+    \item Validation: validazione del modello realizzato usando la k-fold cross-validation;
+    \item Testing: testing delle performance del metodo sul test set.
 \end{itemize}
 
 \begin{figure}[h!t]
@@ -410,7 +410,7 @@ Date le buone performance mostrate dalla classificazione per topic effettuata co
 \label{sssec:singleclass}
 Con questo approccio viene realizzato un singolo classificatore in grado di riconosce frasi contenenti dati sensibili e/o personali. Il vantaggio è quello di avere un unico classificatore sensitività in grado di individuare contenuti sensibili, lo svantaggio è il fatto che questo tipo di classificatore ha una conoscenza a grana grossa della di un dato sensibile e quindi è facile che sbagli ad assegnare il grado di sensibilità.
 
-\textbf{INTRODURRE LA FASE DI VALIDAZIONE E QUELLA DI TESTING} 
+\paragraph{Validation} Il dataset è stato diviso in 80\% per il training e 20\% per il testing con la funzione {\tt train\_test\_split}. Il dataset di training è oggetto della validation. Abbiamo effettuato una k-fold cross-validation con $k=10$ utilizzando il metodo {\tt GridSearchCV} di scikit-learn per Python cercando di ottimizzare il roc\_auc score. In Tabella~\ref{tbl:validation_sens} si mostrano sia i parametri oggetto della funzione {\tt GridSearchCV} sia i risultati raggiunti in termini di roc\_auc score. 
 \begin{table}[h]
 \label{tbl:validation_sens}
 \centering
@@ -429,8 +429,10 @@ Con questo approccio viene realizzato un singolo classificatore in grado di rico
 \end{table}
 \FloatBarrier
 
+\paragraph{Testing} Dopo la fase di validazione, sono stati ottenuti i migliori parametri per il classificatore Random Forest. Il modello viene quindi ri-addestrato sul training set e se ne misurano le performance sul test set. I risulati sono riportati in Tabella~\ref{tbl:training_sens}.
+
 \begin{table}[h]
-\label{tbl:training_sens}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -441,24 +443,30 @@ Recall & 0.769 & 0.760 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.848} \\ \hline
 \end{tabular}
 \caption{Performance del classificatore Random Forest ottenute nella fase di testing con approccio single-classifier.}
+\label{tbl:training_sens}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_200}\newline
+Matrice di confusione per questo test è mostrata in Figura~\ref{fig:mtrconf_sim_200}.
 
-Le performance del classificatore di sensibilità singolo sono discrete, ma dobbiamo sempre tener conto della limitata conoscenza può avere.
+
+Tenuto conto della difficoltà di questo task, le performance del classificatore di sensibilità singolo sono discrete.
 
 \subsubsection{Approccio con classificatori multipli}
 \label{sssec:multiclass}
-Dopo aver provato questo approccio si è deciso di implementare 5 differenti classificatori di sensitività(uno per ogni topic) essi verranno addestrati a riconoscere argomenti sensibili sui 200 elementi che appartengono ad ogni topic di {\tt ds200.csv}.
+L'altro approccio al problema della sensibilità di un testo è quello di avere cinque classificatori differenti (uno per ogni topic) che verranno addestrati a riconoscere argomenti sensibili sui 200 elementi che appartengono ad ogni topic di {\tt ds200.csv}.
 
-Di seguito verranno mostrati tutti i risultati ottenuti durante la validation e il training dei vari classificatori di sensibilità, per esigenze di spazio le matrici di confusione di ogni classificatore sono state riportate nella appendice di questo testo.
+Di seguito sono mostrati tutti i risultati ottenuti durante la validation e il testing dei vari classificatori di sensibilità. Per esigenze di spazio, e leggibilità del documento, le matrici di confusione di ogni classificatore nella fase di testing sono state riportate in Appendice~\ref{}.
 
 \subsubsection{Validation e testing sensitiveness politics}
 \label{sssec:val_testing_pol}
+\paragraph{Validation} La fase di validation per ciascuno dei classificatori di sensibilità è la medesima: si suddivide il dataset in 80\% per training e 20\% per testing con la funzione {\tt train\_test\_split} di scikit-learn per Python. Il dataset di training è oggetto della validazione vera e propria che avviene con il metodo {\tt GridSearchCV} in cui si testano diversi parametri per il classificatore e si tenta di ottimizzare il roc\_auc score.  I risultati di questa fase sono riportati nelle Tabelle~\cref{tbl:val_sens_pol,tbl:val_sens_health,tbl:val_sens_travel,tbl:val_sens_job,tbl:val_sens_general}, per i topic Politica, Salute, Viaggi, Lavoro e General rispettivamente.
+
+\paragraph{Testing} Una volta ottenuti i migliori parametri per il classificatore, il modello viene ri-addestrato sul training set e se ne misurano le performance sul test set.  I risultati di questa fase sono riportati nelle Tabelle~\cref{tbl:training_sens_pol,tbl:training_sens_health,tbl:training_sens_travel,tbl:training_sens_job,tbl:training_sens_general}, per i topic Politica, Salute, Viaggi, Lavoro e General rispettivamente.
+
 
 \begin{table}[h]
-\label{tbl:val_sens_pol}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -471,12 +479,12 @@ Di seguito verranno mostrati tutti i risultati ottenuti durante la validation e 
 517 & +/-0.143 & 0.890 \\ \hline
 1013 & +/-0.146 & 0.884 \\ \hline
 \end{tabular}
-\caption{risultati della validation sul classificatore di sensitivà politica}
+\caption{Risultati della validation per il classificatore di sensitivà \textit{politica}}
+\label{tbl:val_sens_pol}
 \end{table}
 \FloatBarrier
 
 \begin{table}[h]
-\label{tbl:training_sens_pol}
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -486,17 +494,18 @@ Precision & 0.695 & 0.764 \\ \hline
 Recall & 0.8 & 0.65 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.773} \\ \hline
 \end{tabular}
-\caption{risultati del training sul classificatore di sensitivà politica}
+\caption{risultati del testing per classificatore di sensitivà \textit{politica}}
+\label{tbl:training_sens_pol}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_p}
+%Matrice di confusione~\ref{fig:mtrconf_sim_p}
 
 \subsubsection{Validation e testing sensitiveness health}
 \label{sssec:val_testing_health}
 
 \begin{table}[h]
-\label{tbl:val_sens_health}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -509,12 +518,13 @@ Matrice di confusione~\ref{fig:mtrconf_sim_p}
 517 & +/-0.086 & 0.958 \\ \hline
 1013 & +/-0.073 & 0.961 \\ \hline
 \end{tabular}
-\caption{risultati della validation sul classificatore di sensitivà health}
+\caption{Risultati della validation per classificatore di sensitivà \textit{health}}
+\label{tbl:val_sens_health}
 \end{table}
 \FloatBarrier
 
 \begin{table}[h]
-\label{tbl:training_sens_health}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -524,17 +534,18 @@ Precision & 0.894 & 0.857 \\ \hline
 Recall & 0.85 & 0.9 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.935} \\ \hline
 \end{tabular}
-\caption{risultati del training sul classificatore di sensitivà health}
+\caption{Risultati del testing per il classificatore di sensitivà \textit{health}}
+\label{tbl:training_sens_health}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_h}
+%Matrice di confusione~\ref{fig:mtrconf_sim_h}
 
 \subsubsection{Validation e testing sensitiveness job}
 \label{sssec:val_testing_job}
 
 \begin{table}[h]
-\label{tbl:val_sens_job}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -547,12 +558,13 @@ Matrice di confusione~\ref{fig:mtrconf_sim_h}
 517 & +/-0.111 & 0.908 \\ \hline
 1013 & +/-0.119 & 0.914 \\ \hline
 \end{tabular}
-\caption{risultati della validation sul classificatore di sensitivà job}
+\caption{Risultati della validation per il classificatore di sensitivà \textit{job}}
+\label{tbl:val_sens_job}
 \end{table}
 \FloatBarrier
 
 \begin{table}[h]
-\label{tbl:training_sens_job}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -562,17 +574,18 @@ Precision & 0.814 & 0.923 \\ \hline
 Recall & 0.956 & 0.705 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.928} \\ \hline
 \end{tabular}
-\caption{risultati del training sul classificatore di sensitivà job}
+\caption{Risultati del testing per il classificatore di sensitivà \textit{job}}
+\label{tbl:training_sens_job}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_j}
+%Matrice di confusione~\ref{fig:mtrconf_sim_j}
 
 \subsubsection{Validation e testing sensitiveness travel}
 \label{sssec:val_testing_travel}
 
 \begin{table}[h]
-\label{tbl:val_sens_travel}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -585,12 +598,13 @@ Matrice di confusione~\ref{fig:mtrconf_sim_j}
 517 & +/-0.098 & 0.905 \\ \hline
 1013 & +/-0.092 & 0.903 \\ \hline
 \end{tabular}
-\caption{risultati della validation sul classificatore di sensitivà travel}
+\caption{Risultati della validation per il classificatore di sensitivà travel}
+\label{tbl:val_sens_travel}
 \end{table}
 \FloatBarrier
 
 \begin{table}[h]
-\label{tbl:training_sens_travel}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -600,17 +614,18 @@ Precision & 0.791 & 0.937 \\ \hline
 Recall & 0.95 & 0.75 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.971} \\ \hline
 \end{tabular}
-\caption{risultati del training sul classificatore di sensitivà travel}
+\caption{risultati del testing per il classificatore di sensitivà \textit{travel}}
+\label{tbl:training_sens_travel}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_t}
+%Matrice di confusione~\ref{fig:mtrconf_sim_t}
 
 \subsubsection{Validation e testing sensitiveness general}
 \label{sssec:val_testing_general}
 
 \begin{table}[h]
-\label{tbl:val_sens_general}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -623,12 +638,13 @@ Matrice di confusione~\ref{fig:mtrconf_sim_t}
 517 & +/-0.233 & 0.656 \\ \hline
 1013 & +/-0.189 & 0.637 \\ \hline
 \end{tabular}
-\caption{risultati della validation sul classificatore di sensitivà general}
+\caption{Risultati della validation per il classificatore di sensitivà \textit{general}}
+\label{tbl:val_sens_general}
 \end{table}
 \FloatBarrier
 
 \begin{table}[h]
-\label{tbl:training_sens_general}
+
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -638,15 +654,16 @@ Precision & 0.593 & 0.625 \\ \hline
 Recall & 0.863 & 0.277 \\ \hline
 Roc-Auc & \multicolumn{2}{c|}{0.736} \\ \hline
 \end{tabular}
-\caption{risultati del training sul classificatore di sensitivà general}
+\caption{Risultati del testing per classificatore di sensitivà general}
+\label{tbl:training_sens_general}
 \end{table}
 \FloatBarrier
 
-Matrice di confusione~\ref{fig:mtrconf_sim_g}
+%Matrice di confusione~\ref{fig:mtrconf_sim_g}
 
-Dai risultati si evince che i classificatori di sensibilità singoli (tranne nel caso di general) sono più accurati rispetto al singolo classificatore di sensibilità. Quindi consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorati si è deciso di adottare la soluzione con 5 classificatori di sensibilità.
+Dai risultati ottenuti si evince che i classificatori di sensibilità multipli (tranne nel caso di general) sono più accurati o comparabili rispetto al singolo classificatore di sensibilità. Dunque, consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorate si è deciso di adottare la soluzione con 5 classificatori di sensibilità. In ottica di implementazione di un tool completo, ad un punteggio di Technology Readiness Level (TRL) alto, è preferibile avere diversi classificatori addestrati per un task "più piccolo".
 
-Quindi per dire quanto sia sensibile una frase(la sensibilità è un valore compreso fra 0 e 1 dove 0 vuol dire non sensibile 1 sensibilissimo) si seguiranno le seguenti frasi
+Quindi per dire quanto sia sensibile una frase (la sensibilità è un valore compreso fra 0 e 1 dove 0 vuol dire non sensibile 1 sensibilissimo) si seguiranno le seguenti frasi
 
 \section{Customized sensitivity classification}
 \label{sec:pres_sens_class}
@@ -743,7 +760,7 @@ Abbiamo utilizzato i dataset {\tt ds200.csv} visti in Sezione~\ref{} integrati c
 I dataset sono stati suddivisi, con un approccio stratificato, in un 80\% per il training ed un 20\% per il testing utilizzando la funzione {\tt train\_test\_split} di scikit-learn per Python. Successivamente, il training set è stato oggetto di una 10-fold cross-validation con il metodo {\tt GridSearchCV} in cui abbiamo cercato di ottimizzare il parametro di aggressività $C$. Si osservi però che questo parametro è in realtà molto user-based, ragion per cui il miglior metodo per stimarlo potrebbe essere effettuando uno studio sugli utenti: è possibile che questi preferiscano un classificatore molto aggressivo o, al contrario, siano soddisfatti maggiormente con un apprendimento più lento e graduale. I valori di $C$ provati sono i seguenti: 0.001, 0.01, 0.1, 1, 10, 100. I risultati di questa fase possono essere visti in Tabella~\ref{tbl:testing_Customized}. Il miglior parametro è risultato essere per tutti i casi, $C=0.01$.
 
 \subsection{Testing}
-Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200. I risultati di questa fase possono essere trovati in Tabella~\ref{tbl:testing_Customized}. Si nota come CONTINUARE
+Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200. I risultati di questa fase possono essere trovati in Tabella~\ref{tbl:testing_Customized}. Si nota come utilizzando questo approccio le performance del classificatore migliorino sensibilmente rispetto quelle ottenute in Sezione~\ref{}.
 
 
 \begin{table}[h!t]
