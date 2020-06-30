@@ -177,8 +177,9 @@ Job & 1000& 2 \\
 Travel & 1000& 3 \\ 
 General & 1000& 4 \\ \bottomrule
 \end{tabular}
+\caption{Logica di conversione da topic a etichette 
+numeriche e informazioni dataset.}
 \label{tbl:mtc}
-\caption{Logica di conversione da topic a etichette numeriche e informazioni dataset.}
 \end{table}
 
 \subsection{Validation}
@@ -368,7 +369,7 @@ Dati medici o stato di salute & \cmark \\ \hline
 \end{table}
 \FloatBarrier
 
-Una volta completata l'etichettatura abbiamo ottenuto un certo numero di testi sensibili per ogni topic. I principali dati di riferimento per questo dataset sono riportati nella tabella~\ref{tbl:ds200}. Il dataset contente testi, topic, sensibilità è stato chiamato {\tt{ds200.csv}}.
+Una volta completata l'etichettatura abbiamo ottenuto un certo numero di testi sensibili per ogni topic. I principali dati di riferimento per questo dataset sono riportati nella tabella~\ref{tbl:ds200}.
 
 \begin{table}[h]
 \centering
@@ -412,7 +413,6 @@ Con questo approccio viene realizzato un singolo classificatore in grado di rico
 
 \paragraph{Validation} Il dataset è stato diviso in 80\% per il training e 20\% per il testing con la funzione {\tt train\_test\_split}. Il dataset di training è oggetto della validation. Abbiamo effettuato una k-fold cross-validation con $k=10$ utilizzando il metodo {\tt GridSearchCV} di scikit-learn per Python cercando di ottimizzare il roc\_auc score. In Tabella~\ref{tbl:validation_sens} si mostrano sia i parametri oggetto della funzione {\tt GridSearchCV} sia i risultati raggiunti in termini di roc\_auc score. 
 \begin{table}[h]
-\label{tbl:validation_sens}
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
@@ -426,6 +426,7 @@ Con questo approccio viene realizzato un singolo classificatore in grado di rico
 1013 & +/-0.058 & 0.851 \\ \hline
 \end{tabular}
 \caption{ROC AUC score ottenuti in fase di validation con Random Forest nel caso single-classifier.}
+\label{tbl:validation_sens}
 \end{table}
 \FloatBarrier
 
@@ -456,7 +457,7 @@ Tenuto conto della difficoltà di questo task, le performance del classificatore
 \label{sssec:multiclass}
 L'altro approccio al problema della sensibilità di un testo è quello di avere cinque classificatori differenti (uno per ogni topic) che verranno addestrati a riconoscere argomenti sensibili sui 200 elementi che appartengono ad ogni topic di {\tt ds200.csv}.
 
-Di seguito sono mostrati tutti i risultati ottenuti durante la validation e il testing dei vari classificatori di sensibilità. Per esigenze di spazio, e leggibilità del documento, le matrici di confusione di ogni classificatore nella fase di testing sono state riportate in Appendice~\ref{}.
+Di seguito sono mostrati tutti i risultati ottenuti durante la validation e il testing dei vari classificatori di sensibilità. Per esigenze di spazio, e leggibilità del documento, le matrici di confusione di ogni classificatore nella fase di testing sono state riportate in Appendice~(\ref{ch:appendix}).
 
 \subsubsection{Validation e testing sensitiveness politics}
 \label{sssec:val_testing_pol}
@@ -663,15 +664,13 @@ Roc-Auc & \multicolumn{2}{c|}{0.736} \\ \hline
 
 Dai risultati ottenuti si evince che i classificatori di sensibilità multipli (tranne nel caso di general) sono più accurati o comparabili rispetto al singolo classificatore di sensibilità. Dunque, consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorate si è deciso di adottare la soluzione con 5 classificatori di sensibilità. In ottica di implementazione di un tool completo, ad un punteggio di Technology Readiness Level (TRL) alto, è preferibile avere diversi classificatori addestrati per un task "più piccolo".
 
-Quindi per dire quanto sia sensibile una frase (la sensibilità è un valore compreso fra 0 e 1 dove 0 vuol dire non sensibile 1 sensibilissimo) si seguiranno le seguenti frasi
-
 \section{Customized sensitivity classification}
 \label{sec:pres_sens_class}
 La privacy è una percezione soggettiva, in cui ogni utente ha il proprio livello di riservatezza con riguardo alle proprie informazioni private. Ancora più importante, l'atteggiamento verso la privacy varia da un argomento all'altro. 
 
 Ne deriva che la realizzazione di uno sistema che non tenga conto delle esigenze e preferenze degli utenti può risultare in uno strumento ostruente, fastidioso o addirittura inutile. Ragion per cui bisogna sviluppare uno strumento che in qualche modo si adatti alle esigenze e preferenze degli utenti. 
 
-Per effettuare questa operazione esistono diverse tecniche ad esempio Q-learning~\cite{q-learning} e vari tipi di reinforcement learning~\cite{reinfoce-learn}, agenti basati su LSTM Network~\cite{lstm}, e così via. Essi sono dei modelli che apprendono sulla base dei feedback ricevuti dall'ambiente in cui sono in esecuzione: ad esempio, il feedback di un utente è utile ad addestrare sistemi di recommendation.
+Per effettuare questa operazione esistono diverse tecniche ad esempio Q-learning~\cite{q-learning} e vari tipi di reinforcement learning~\cite{reinforce-learn}, agenti basati su LSTM Network~\cite{lstm}, e così via. Essi sono dei modelli che apprendono sulla base dei feedback ricevuti dall'ambiente in cui sono in esecuzione: ad esempio, il feedback di un utente è utile ad addestrare sistemi di recommendation.
 
 Per catturare l'atteggiamento degli utenti verso la privacy personale, è stato realizzato un modello \textit{online} di learning che in base alla percezione di sensibilità dell'utente sarà in grado di segnalare solo i contenuti che per quel singolo utente risultano sensibili.
 A tale scopo ci siamo ispirati al sistema di priority inbox di gmail~\cite{inbox}.
@@ -756,16 +755,15 @@ La "early integration" consiste nel concatenare le view singole cioè le caratte
 \FloatBarrier
 
 \subsection{Validation}
-Abbiamo utilizzato i dataset {\tt ds200.csv} visti in Sezione~\ref{} integrati con la valutazione del Topic-specific Sensitiveness Classifier di riferimento. Quindi il dataset {\tt ds200.csv} relativo al topic Health viene integrato con la valutazione di Health Sensitiveness classifier e così via per tutti gli altri.
+Abbiamo utilizzato i dataset {\tt ds200.csv} visti in Sezione~\ref{ssec:create_sens_ds} integrati con la valutazione del Topic-specific Sensitiveness Classifier di riferimento. Quindi il dataset {\tt ds200.csv} relativo al topic Health viene integrato con la valutazione di Health Sensitiveness classifier e così via per tutti gli altri.
 I dataset sono stati suddivisi, con un approccio stratificato, in un 80\% per il training ed un 20\% per il testing utilizzando la funzione {\tt train\_test\_split} di scikit-learn per Python. Successivamente, il training set è stato oggetto di una 10-fold cross-validation con il metodo {\tt GridSearchCV} in cui abbiamo cercato di ottimizzare il parametro di aggressività $C$. Si osservi però che questo parametro è in realtà molto user-based, ragion per cui il miglior metodo per stimarlo potrebbe essere effettuando uno studio sugli utenti: è possibile che questi preferiscano un classificatore molto aggressivo o, al contrario, siano soddisfatti maggiormente con un apprendimento più lento e graduale. I valori di $C$ provati sono i seguenti: 0.001, 0.01, 0.1, 1, 10, 100. I risultati di questa fase possono essere visti in Tabella~\ref{tbl:testing_Customized}. Il miglior parametro è risultato essere per tutti i casi, $C=0.01$.
 
 \subsection{Testing}
-Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200. I risultati di questa fase possono essere trovati in Tabella~\ref{tbl:testing_Customized}. Si nota come utilizzando questo approccio le performance del classificatore migliorino sensibilmente rispetto quelle ottenute in Sezione~\ref{}.
-
+Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200.
 
 \begin{table}[h!t]
 \centering
-\label{tbl:testing_Customized}
+
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 \multicolumn{5}{|c|}{\textbf{Accuracy}} \\ \hline
@@ -773,5 +771,7 @@ Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customi
 0.835 & 0.98 & 0.95 & 0.975 & 0.965 \\ \hline
 \end{tabular}
 \caption{Tabella delle accuracy ottenute dal Customized Sensitiveness Classifier sui vari topic}
+\label{tbl:testing_Customized}
 \end{table}
 \FloatBarrier
+I risultati della fase di testing possono essere trovati in Tabella~\ref{tbl:testing_Customized}. Si nota come utilizzando questo approccio le performance del classificatore migliorino sensibilmente rispetto quelle ottenute in Sezione~\ref{sssec:multiclass}.

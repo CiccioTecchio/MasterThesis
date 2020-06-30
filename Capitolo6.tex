@@ -127,7 +127,7 @@ In Figura~\ref{fig:confMtrTopicClassGT70} è mostrata la matrice di confusione p
 
 \subsection{Sensitiveness classifier}
 \label{sec:qualSens}
-Il secondo modulo di Knoxly di cui si vuole valutare l'efficacia è il Sensitiveness Classifier. Si osserva se una frase classificata come sensibile, quindi avendo con uno score di $probabilitaPositiva \geq 0.50$, è realmente sensibile in accordo alla euristica sulla sensibilità definita in Sez.~\ref{ssec:tblSens&Euricstic}. 
+Il secondo modulo di Knoxly di cui si vuole valutare l'efficacia è il Sensitiveness Classifier. Si osserva se una frase classificata come sensibile, quindi avendo con uno score di $probabilitaPositiva \geq 0.50$, è realmente sensibile in accordo alla euristica sulla sensibilità definita in Sez.~\ref{sssec:sens_labeling}. 
 
 \begin{figure}[h!t]
     \centering
@@ -157,8 +157,8 @@ Per questo esperimento abbiamo utilizzato un dataset minimale, composto da 10 el
 \textit{deepl} & united Non so di cosa stai parlando Lei sta andando su voli nonstop da SNA a SFO e poi SFO a EWR \\
 \bottomrule
 \end{tabular}
-\label{tab:datasetcustomized}
 \caption{Esempio di data-augmentation per il dataset Travel nell'esperimento di efficacia per il Customized Sensitiveness Classifier. \textit{Reverso}: refactoring della frase utilizzando il famoso servizio online, \textit{deepl}: traduzione della frase dall'inglese all'italiano.}
+\label{tab:datasetcustomized}
 \end{table}
 \FloatBarrier
 
