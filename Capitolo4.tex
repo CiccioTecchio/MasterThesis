@@ -190,7 +190,7 @@ Inizialmente abbiamo diviso il dataset in Tabella~\ref{tbl:mtc} in un 80\% riser
 
 Tale fase è stata sfruttata anche per l'hyper-parameter tuning usando il metodo {\tt GridSearchCV} di scikit-learn per Python.
 
-In questo lavoro è stato utilizzato uno dei più popolari modelli di machine learning disponibile in letteratura e implementato in scikit-learn, esso è il Random Forest(Sezione~\ref{ssec:RF}). Le sue prestazioni si basano principalmente sul \textit{numero di stimatori}, quindi abbiamo testato da 20 a 200 stimatori. I migliori risultati sono stati trovati tra 100 e 550 stimatori.
+In questo lavoro è stato utilizzato uno dei più popolari modelli di machine learning disponibile in letteratura e implementato in scikit-learn, esso è il Random Forest(Sezione~\ref{ssec:RF}). Le sue prestazioni si basano principalmente sul \textit{numero di stimatori}, quindi abbiamo testato da 20 a 1000 stimatori. I migliori risultati sono stati trovati tra 100 e 550 stimatori.
 
 In questa fase si è tentato di massimizzare il parametro F-score (vedi Sezione~\ref{metrics}), impostando oppurtunamente {\tt scoring} di {\tt GridSearchCV}.
 
@@ -226,7 +226,7 @@ La tabella~\ref{tbl:training_ds1000} riporta le performance ottenute da ciascun 
  & Recall & 0.965 & 0.995 & 0.985  & 0.995 & 0.975 \\ \cline{2-7} 
  & Fscore & 0.972 & 0.992 & 0.985 & 0.980 & 0.984 \\ \hline
 \end{tabular}
-\caption{misure training ds1000.csv}
+\caption{Risultati per la fase di testing di Random Forest sul dataset ds1000.csv}
 \label{tbl:training_ds1000}
 \end{table}
 \FloatBarrier
@@ -249,7 +249,7 @@ La tabella~\ref{tbl:testing_wild} riporta le misure ottenute dalla sperimentazio
  & Recall & 0.969 & 0.995 & 0.993 & 0.996 & 0.988 \\ \cline{2-7} 
  & Fscore & 0.980 & 0.995 & 0.989 & 0.985 & 0.999 \\ \hline
 \end{tabular}
-\caption{misure validation wild}
+\caption{Risultati della fase di testing sul dataset wild}
 \label{tbl:testing_wild}
 \end{table}
 \FloatBarrier
@@ -313,11 +313,11 @@ In questa fase ds200.csv è stato etichettato secondo le regole delineate in~\ci
 \begin{figure}
     \centering
     \includegraphics[scale=0.4]{Figure/sensTbl.png}
-    \caption{Tabella delle sensibilità utilizzata da Rumbold et al.}
+    \caption{Tabella delle sensibilità utilizzata da Rumbold et al.~\cite{spectrum}}
     \label{fig:sensRumboldd}
 \end{figure}
 \FloatBarrier
-Le righe della tabella mostrate in figura~\ref{fig:sensRumboldd} contengono la categoria a cui una frase può appartenere e quanto essa possa essere sensibile, il \textbf{livello di sensibilità} varia da 0(non sensibile) a 10(molto sensibile). I numeri presenti nelle celle variano da 0 a 4 ed essi rappresentano la \textbf{frequenza} che l'argomento descritto nella riga si presenti con il livello di sensibilità descritto nella colonna. Ad esempio prendiamo l'argomento \textit{Relating to object} esso ha un livello di sensibilità pari a 0 e nella cella viene riportato il numero 4, questo vuol dire che quando si parlerà di argomenti relativo ad oggetti questi saranno sicuramente poco sensibili.
+Le righe della tabella mostrate in figura~\ref{fig:sensRumboldd} contengono la categoria a cui una frase può appartenere e quanto essa possa essere sensibile, il \textbf{livello di sensibilità} varia da 0 (non sensibile) a 10 (molto sensibile). I numeri presenti nelle celle variano da 0 a 4 ed essi rappresentano la \textbf{frequenza} che l'argomento descritto nella riga si presenti con il livello di sensibilità descritto nella colonna. Ad esempio prendiamo l'argomento \textit{Relating to object} esso ha un livello di sensibilità pari a 0 e nella cella viene riportato il numero 4, questo vuol dire che quando si parlerà di argomenti relativo ad oggetti questi saranno sicuramente poco sensibili.
 
 
 %\subsubsection{Tabella delle sensibilità}
@@ -400,7 +400,7 @@ Date le buone performance mostrate dalla classificazione per topic effettuata co
 \begin{figure}[h]
     \centering
     \includegraphics[width=15cm]{Figure/grafici/vs_cropped.pdf}
-    \caption{figura riassuntiva degli approcci analisi di sensitività}
+    \caption{I due approcci per la creazione del Sensitiveness classifier.}
     \label{fig:approccisens}
 \end{figure}
 \FloatBarrier

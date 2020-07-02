@@ -3,9 +3,9 @@ In questo capitolo verrà spiegata come è stata effettuata la valutazione delle
 
 \section{Metodologia utilizzata}
 \label{sec:metodologiaevaluation}
-L'analisi qualitativa e qualitativa è state effettuata cercando di calare quanto più possibile il plug-in in un contesto reale. Per fare cioè esso doveva effettuare le sue predizioni su degli input che non aveva mai visto. A tal fine è stato scelto da \href{https://www.kaggle.com/}{kaggle.com} il dataset {\tt Sentiment140 dataset with 1.6 million tweets }\cite{sentiment140} dalla quale sono state selezionate 500 entry con una funzione {\tt random}.
+L'analisi qualitativa e qualitativa è state effettuata cercando di calare quanto più possibile il plug-in in un contesto reale. Per fare cioè esso doveva effettuare le sue predizioni su degli input che non aveva mai visto. A tal fine è stato scelto da \href{https://www.kaggle.com/}{kaggle.com} il dataset {\tt Sentiment140 dataset with 1.6 million tweets }\cite{sentiment140} dalla quale sono state selezionate 1000 entry con una funzione {\tt random}. Successivamente sono state scartate le entry con lunghezza $l<5$ caratteri ottenendo un dataset da 934 elementi.
 
-Per inviare le 500 entry al backend di Knoxly è stato realizzato un bot con \href{https://selenium-python.readthedocs.io/}{Selenium with Python}. Esso interagisce con una pagina web e inviava la frase al backend secondo i criteri definiti  dall'euristica per l'invio della frase(Sez. \ref{sec:frontend}).
+Per inviare le 934 entry al backend di Knoxly è stato realizzato un bot con \href{https://selenium-python.readthedocs.io/}{Selenium with Python}. Esso interagisce con una pagina web e invia la frase al backend secondo i criteri definiti  dall'euristica per l'invio della frase(Sez. \ref{sec:frontend}).
 
 Durante l'invio delle frasi il backend registra (i) tempo (in secondi), (ii) RAM utilizzata (in Megabytes) e (iii) CPU utilizzata (in percentuale dove ogni thread utilizzato a pieno corrisponde al 100\%\footnote{Una macchina con 2 core, 4 thread può avere un consumo di CPU massimo del 400\%.}), mentre, il backend misura (i) RAM (in Megabytes) e (ii) CPU utilizzata (in percentuale) con e senza l'utilizzo di Knoxly.
 
@@ -41,18 +41,18 @@ Delle frasi che sono state inviate al backend vengono prese le seguenti misure:
 \end{figure}
 \FloatBarrier
 
-Si nota che il server in genere impiega dagli 1.3 agli 1.6 secondi per smaltire una richiesta, raramente impiega più di due secondi e che non impiega mai 3 secondi o più.
+Si nota che il server il 90\% delle volte impiega dagli 1.3 agli 1.6 secondi per smaltire una richiesta, raramente impiega più di due secondi e che non impiega mai 3 secondi o più.
 
 \paragraph{\% Utilizzo CPU}
 \begin{figure}[h!t]
     \centering
-    \includegraphics[width=15cm]{Figure/quantitativa/CPU-srv.png}
+    \includegraphics[width=15cm]{Figure/quantitativa/CPUserver.pdf}
     \caption{grafico della percentuale di CPU impiegata per smaltire le richieste}
     \label{fig:srvCPU}
 \end{figure}
 \FloatBarrier
 
-Si nota che il server generalmente utilizza il 3\% della sua CPU per smaltire le richieste  e che solo nelle fasi iniziali arriva ad utilizzare l'1 o il 2 percento della CPU.
+Si nota che il server nel 90\% dei casi utilizza il meno dell'11\% della sua CPU per smaltire le richieste  e che solo nelle fasi iniziali arriva ad utilizzare l'1 o il 2 percento della CPU.
 
 \paragraph{RAM allocata}
 \begin{figure}[h!t]
@@ -63,7 +63,7 @@ Si nota che il server generalmente utilizza il 3\% della sua CPU per smaltire le
 \end{figure}
 \FloatBarrier
 
-Si nota che il consumo di RAM, lato backend, è compreso fra i 10.5 e i 12 Mb di RAM
+Si nota che il consumo di RAM, lato backend, nel 100\% dei casi è compreso fra i 10.5 e i 12 Mb di RAM
 
 \subsection{Client-side}
 \label{sec:quantClient}
@@ -82,7 +82,7 @@ Delle frasi che sono state inviate al frontend vengono prese le seguenti misure:
 \end{figure}
 \FloatBarrier
 
-Dal grafico si evince che l'andamento dell'utilizzo delle percentuale di CPU solo di Knoxly è sovrapposto all'andamento dell'utilizzo della CPU solo da parte di Chrome. Quindi possiamo dire che Knoxly e Chrome utilizzano la stessa percentuale di RAM durante l'invio delle frasi e che Knoxly e Chrome al massimo arrivano ad utilizzare il 160\% della CPU,ovvero,poco più di un core e mezzo.
+Dal grafico si evince che l'andamento dell'utilizzo delle percentuale di CPU solo di Knoxly è sovrapposto all'andamento dell'utilizzo della CPU solo da parte di Chrome. Quindi possiamo dire che Knoxly e Chrome utilizzano la stessa percentuale di RAM durante l'invio delle frasi e che Knoxly e Chrome nel 100\% dei casi al massimo arrivano ad utilizzare il 160\% della CPU,ovvero,poco più di un core e mezzo.
 
 \paragraph{RAM allocata da Chrome e RAM allocata da Knoxly}
 \begin{figure}[h!t]
@@ -92,7 +92,7 @@ Dal grafico si evince che l'andamento dell'utilizzo delle percentuale di CPU sol
     \label{fig:clientRAM}
 \end{figure}
 \FloatBarrier
-Dal grafico si evince che inizialmente Knoxly occupa più RAM rispetto a Chrome e questo può essere dovuto al fatto che il plug-in inizialmente deve caricare in memoria tutti i dizionari e le regexp di cui necessita per effettuare l'analisi lessicale e l'evidenziazione di un testo sensibile.
+Dal grafico si evince che nel 100\% dei casi Knoxly occupa più RAM rispetto a Chrome, arrivando ad allocare fino a un massimo di 45Mb di RAM contro i 30Mb occupati da Chrome. Questo può essere dovuto al fatto che il plug-in inizialmente deve caricare in memoria tutti i dizionari e le regexp di cui necessita per effettuare l'analisi lessicale e l'evidenziazione di un testo sensibile.
 
 
 
@@ -143,7 +143,7 @@ In figura~\ref{fig:sensitivenessevaluation} è riportato il risultato di questa 
 \label{sec:qualCusto}
 Per testare il modulo di Customized Sensitiveness Classifier abbiamo automatizzato con Selenium la digitazione di testo in linguaggio naturale e l'invio feedback al customized sensitiveness classifier lato client. L'idea è stata quella di preparare un dataset di testi che risultano essere sensibili e farli classificare al customized sensitiveness classifier. Per ciascun testo, vogliamo inviare a Knoxly un feedback negativo e ripetere la classificazione dell'intero dataset. Ci aspettiamo che se il customized sensitiveness classifier apprende in modo corretto dall'utente, allora l'accuratezza risultante dalla classificazione diminuisce con l'aumentare dei feedback.
 
-Per questo esperimento abbiamo utilizzato un dataset minimale, composto da 10 elementi sensibili per ciascun topic (health, politics, travel, general, job). Abbiamo incrementato la taglia di questo dataset del 200\% popolandolo con frasi di significato simile ma scritte in altre lingue (italiano in particolare) o utilizzando sinonimi. Per il primo caso abbiamo utilizzato deepl\footnote{\url{https://www.deepl.com/translator}}, un famoso..., nel secondo invece, Reverso\footnote{\url{https://synonyms.reverso.net/synonym/}}, un servizio online che aiuta gli utenti nelle traduzioni domain-specific e nella ricerca di sinonimi. In tabella~\ref{tab:datasetcustomized} ne è riportato un esempio per il topic travel.
+Per questo esperimento abbiamo utilizzato un dataset minimale, composto da 10 elementi sensibili per ciascun topic (health, politics, travel, general, job). Abbiamo incrementato la taglia di questo dataset del 200\% popolandolo con frasi di significato simile ma scritte in altre lingue (italiano in particolare) o utilizzando sinonimi. Per il primo caso abbiamo utilizzato deepl\footnote{\url{https://www.deepl.com/translator}}, un famoso sistema di traduzione basato su deep learning, nel secondo invece, Reverso\footnote{\url{https://synonyms.reverso.net/synonym/}}, un servizio online che aiuta gli utenti nelle traduzioni domain-specific e nella ricerca di sinonimi. In tabella~\ref{tab:datasetcustomized} ne è riportato un esempio per il topic travel.
 
 
 \begin{table}[h!t]
