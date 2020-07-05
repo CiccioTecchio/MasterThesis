@@ -111,12 +111,12 @@ Per rappresentare i testi è stato utilizzato USE di Google (vedi Sezione~\ref{s
 
 Di seguito vengono mostrate le matrici di similarità ottenute dell'inner product. Si può notare che le matrici di similarità con i valori più alti sono politics (Figura~\ref{fig:mtrsim_p}) - con valori che vanno da 0.63 a 1 -, job (Figura~\ref{fig:mtrsim_j}) - con valori che vanno da 0.72 a 1.
 
-Infine, è stata realizzata una matrice che mette insieme le frasi selezionate per ciascun topic per valutare quanto queste se appartenenti a diversi topic si somiglino (differiscano tra loro in questo caso). Il risultato è mostrato in Figura~\ref{fig:mtrsim_mix} dove si può notare che le celle colorate con toni chiari (valori superiori a 0.5) siano ottenute dalla intersezione di frasi appartenenti allo stesso topic, mentre, le celle colorate con toni scuri (valori inferiori al 0.5) siano date dell'inner product di frasi appartenenti a topic diversi.
+Infine, è stata realizzata una matrice che mette insieme le frasi selezionate per ciascun topic per valutare quanto queste se appartenenti a diversi topic si somiglino (differiscano tra loro in questo caso). Il risultato è mostrato in (Figura~\ref{fig:mtrsim_mix}) dove si può notare che le celle colorate con toni chiari (valori superiori a 0.5) siano ottenute dalla intersezione di frasi appartenenti allo stesso topic, mentre, le celle colorate con toni scuri (valori inferiori al 0.5) siano date dell'inner product di frasi appartenenti a topic diversi.
 
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/politics.pdf}
-    \caption{matrici di similarità delle frasi appartenenti al topic politics}
+    \caption{matrici di similarità delle frasi appartenenti al topic politics. Dal campione di 5 frasi preso in esame per il topic poltics si può notare che tutte la maggior parte delle coppie(escludendo le coppie poste sulla diagonale principale) hanno una similarità che va da 0.62 a 0. 64, tranne per la coppia [p1, p0] dove si può notare una similarità pari a 0.98.}
     \label{fig:mtrsim_p}
 \end{figure}
 \FloatBarrier
@@ -124,7 +124,7 @@ Infine, è stata realizzata una matrice che mette insieme le frasi selezionate p
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/health.pdf}
-    \caption{matrici di similarità delle frasi appartenenti al topic health}
+    \caption{matrici di similarità delle frasi appartenenti al topic health. Dal topic health si può notare che le frasi sono poco simili fra loro infatti(escludendo le coppie sulla diagonale principale) tutte le coppie tranne la coppia[h1, h0] hanno una similarità compresa fra 0.42 e 0.45. La coppia [h1, h0] ha una similarità pari a 1 questo significa che nelle frasi appartenenti al topic health una singola frase può avere più di una sola occorrenza.}
     \label{fig:mtrsim_h}
 \end{figure}
 \FloatBarrier
@@ -132,7 +132,7 @@ Infine, è stata realizzata una matrice che mette insieme le frasi selezionate p
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/work.pdf}
-    \caption{matrici di similarità delle frasi appartenenti al topic job}
+    \caption{matrici di similarità delle frasi appartenenti al topic job. Il topic job è il topic che ha i valori di similarità più alti, infatti, tutte le coppie(escludendo quelle sulla diagonale principale) hanno una similarità compresa fra 0.71 e 0.74.}
     \label{fig:mtrsim_j}
 \end{figure}
 \FloatBarrier
@@ -140,7 +140,7 @@ Infine, è stata realizzata una matrice che mette insieme le frasi selezionate p
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/fly.pdf}
-    \caption{matrici di similarità delle frasi appartenenti al topic travel}
+    \caption{matrici di similarità delle frasi appartenenti al topic travel. Il campione usato per travel è quello che riporta le similarità più basse rispetto a tutti gli altri topic, infatti, il valore di similarità più basso viene registrato dalle coppie [f4, f0] e [f4, f1] che hanno un valore di similarità pari a 0.019. In generale in questo campione la similarità è molto bassa arrivando ad un massimo di 0.51.}
     \label{fig:mtrsim_t}
 \end{figure}
 \FloatBarrier
@@ -148,7 +148,7 @@ Infine, è stata realizzata una matrice che mette insieme le frasi selezionate p
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/movie.pdf}
-    \caption{matrici di similarità delle frasi appartenenti al topic general}
+    \caption{matrici di similarità delle frasi appartenenti al topic general. Anche nel topic general si trovano dei valori di similarità molto bassi, ma essi risultano essere comunque migliori dei valori di similarità presenti nel topic travel. I valori di similarità presenti in questo campione vanno da un minimo id 0.13 a un massimo di 0.46.}
     \label{fig:mtrsim_g}
 \end{figure}
 \FloatBarrier
@@ -156,7 +156,7 @@ Infine, è stata realizzata una matrice che mette insieme le frasi selezionate p
 \begin{figure}[h!t]
     \centering
     \includegraphics{Figure/simMatr/mixed.pdf}
-    \caption{matrici di similarità delle frasi appartenenti ai diversi topic}
+    \caption{matrici di similarità delle frasi appartenenti ai diversi topic. In questa matrice di confusione sono presenti i valori di similarità ottenuti facendo l'inner product di tutte le frasi appartenenti ai divesi topic. Infatti si può notare che colori delle celle vicine alla diagonale principale sono più chiari dato che le coppie vicino alla diagonale principale sono formate da frasi appartenenti allo stesso topic. Nella parte più esterna della matrice si può osservare che i colori sono più scuri dato che all'esterno della diagonale principale vi sono le coppie di frasi formate da frasi appartenenti a diversi topic. Quindi s può affermare che frasi appartenti allo stesso topic siano più simili fra loro rispetto a frasi che appartengono a topic diversi.}
     \label{fig:mtrsim_mix}
 \end{figure}
 \FloatBarrier
