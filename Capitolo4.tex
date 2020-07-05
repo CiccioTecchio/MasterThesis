@@ -47,7 +47,7 @@ Sulla base di quanto spiegato nella sezione~\ref{ssec:sensitive_data} sono stati
 \end{table}
 \FloatBarrier
 
-Una volta definiti i topic, sono stati individuati dei dataset opportuni. In particolare, è stato effettuato il download di dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} i quali dopo una fase di pre-processing sono stati uniti in un unico "dataset raw". Nella tabella~\ref{tab:ds_scelti} vengono mostrati i dataset selezionati per ogni topic con il relativo numero di elementi e il link per scaricarlo.
+Una volta definiti i topic, sono stati individuati dei dataset opportuni. In particolare, è stato effettuato il download di dataset messi a disposizione dal sito \href{https://www.kaggle.com/}{kaggle.com} i quali dopo una fase di pre-processing sono stati uniti in un unico \quotes{dataset raw}. Nella tabella~\ref{tab:ds_scelti} vengono mostrati i dataset selezionati per ogni topic con il relativo numero di elementi e il link per scaricarlo.
 
 Si è deciso di introdurre un topic che chiameremo \quotes{General} il quale ci servirà per aumentare l'eterogeneità dei dati, creando rumore. È chiaro che un modello di machine learning basato solo sui topic potenzialmente ricchi di dati sensibili e personali, classificherebbe qualsiasi testo in una delle categorie individuate: ciò genererebbe misclassification perchè esistono dei testi che non ricadono in nessuna delle categorie tra health, politics, job e travel. Nel topic \quotes{General} sono contenute delle trame di film: sono state scelte le trame perchè queste sono composte da testi brevi e raccontano una storia e in alcuni casi questa può riportare dei dati sensibili e personali riguardo i personaggi.
 
@@ -74,7 +74,7 @@ In Tabella~\ref{tab:col_scelte} si elencano i file scelti e le colonne seleziona
 
 \section{Pre-processing sui raw data}
 \label{sec:preprocessingraw}
-I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una "pulizia" di questi dati.
+I testi selezionati risultano molto eterogenei quindi prima di raggruppare tutto in un unico dataset è stata necessaria una \quotes{pulizia} di questi dati.
 
 Dai vari subset ricavati dai dataset originali di Kaggle sono state eliminate le righe che contenevano un testo di lunghezza $l<3$ caratteri e che non erano scritti in lingua inglese. La fase language detection è stata condotta utilizzando la libreria Python  TextBlob\footnote{\url{https://textblob.readthedocs.io/en/dev}}.
 
@@ -89,7 +89,7 @@ Il primo obiettivo del lavoro è la definizione ed implementazione di un modulo 
 \begin{figure}[h!t]
     \centering
     \includegraphics[width=15cm]{Figure/grafici/topicmethod_cropped.pdf}
-    \caption{Principali fasi per la creazione del modulo Topic Classifier: (\textit{Embedding}) le frasi dei vari dataset vengono trasformate in vettori a lunghezza fissa; (\textit{Automatic Labeling}) in base al dataset di provenienza ciascun sample (embedding) viene etichettato automaticamente; (\textit{Validation}) mediante una k-fold cross-validation si validano vari classificatori basati sul supervised learning e si effettua il tuning degli iper-parametri utilizzando il training set $trs$; (\textit{Testing}) una volta ottenuti i migliori parametri per ciascun classificatore, si effettua il testing sul test set $tss$; (\textit{Testing "into the wild"}) si effettua un ulteriore testing su nuovi dati.}
+    \caption{Principali fasi per la creazione del modulo Topic Classifier: (\textit{Embedding}) le frasi dei vari dataset vengono trasformate in vettori a lunghezza fissa; (\textit{Automatic Labeling}) in base al dataset di provenienza ciascun sample (embedding) viene etichettato automaticamente; (\textit{Validation}) mediante una k-fold cross-validation si validano vari classificatori basati sul supervised learning e si effettua il tuning degli iper-parametri utilizzando il training set $trs$; (\textit{Testing}) una volta ottenuti i migliori parametri per ciascun classificatore, si effettua il testing sul test set $tss$; (\textit{Testing \quotes{into the wild}}) si effettua un ulteriore testing su nuovi dati.}
     \label{fig:topicmethod}
 \end{figure}
 
@@ -662,7 +662,7 @@ Roc-Auc & \multicolumn{2}{c|}{0.736} \\ \hline
 
 %Matrice di confusione~\ref{fig:mtrconf_sim_g}
 
-Dai risultati ottenuti si evince che i classificatori di sensibilità multipli (tranne nel caso di general) sono più accurati o comparabili rispetto al singolo classificatore di sensibilità. Dunque, consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorate si è deciso di adottare la soluzione con 5 classificatori di sensibilità. In ottica di implementazione di un tool completo, ad un punteggio di Technology Readiness Level (TRL) alto, è preferibile avere diversi classificatori addestrati per un task "più piccolo".
+Dai risultati ottenuti si evince che i classificatori di sensibilità multipli (tranne nel caso di general) sono più accurati o comparabili rispetto al singolo classificatore di sensibilità. Dunque, consapevoli del fatto le performance del classificatore di sensibilità general vanno migliorate si è deciso di adottare la soluzione con 5 classificatori di sensibilità. In ottica di implementazione di un tool completo, ad un punteggio di Technology Readiness Level (TRL) alto, è preferibile avere diversi classificatori addestrati per un task \quotes{più piccolo}.
 
 \section{Customized sensitivity classification}
 \label{sec:pres_sens_class}
@@ -690,7 +690,7 @@ $$D=\left\{
                 \end{array}
               \right.$$
 
-L'indice $t$ è stato scelto per contrassegnare la dimensione temporale del problema. In questo caso, infatti, i campioni possono continuare ad arrivare per un tempo indefinito. Naturalmente, se sono tratti dalla stessa distribuzione generatrice di dati, l'algoritmo continuerà ad apprendere (probabilmente senza grandi modifiche ai parametri), ma se sono estratti da una distribuzione completamente diversa, i pesi verranno "dimenticati" lentamente a favore della nuova distribuzione. Nel nostro caso siamo su un problema di classificazione binaria (-1 dato non sensibile, 1 dato sensibile).
+L'indice $t$ è stato scelto per contrassegnare la dimensione temporale del problema. In questo caso, infatti, i campioni possono continuare ad arrivare per un tempo indefinito. Naturalmente, se sono tratti dalla stessa distribuzione generatrice di dati, l'algoritmo continuerà ad apprendere (probabilmente senza grandi modifiche ai parametri), ma se sono estratti da una distribuzione completamente diversa, i pesi verranno \quotes{dimenticati} lentamente a favore della nuova distribuzione. Nel nostro caso siamo su un problema di classificazione binaria (-1 dato non sensibile, 1 dato sensibile).
 
 Dato un vettore di peso $w$, la previsione si ottiene semplicemente come:
 
@@ -721,7 +721,7 @@ Per comprendere questa regola, supponiamo che la variabile di gioco $\xi = 0$ (e
 
 L'angolo $\theta> 90$, pertanto, il prodotto punto è negativo e il campione è classificato come $-1$, tuttavia la sua etichetta è $+1$. In questo caso, la regola di aggiornamento diventa molto aggressiva, perché cerca un nuovo $w$ che deve essere il più vicino possibile al precedente (altrimenti la conoscenza esistente viene immediatamente persa), ma deve soddisfare $L = 0$ (in altre parole, la classificazione deve essere corretta).
 
-L'introduzione della variabile slack consente di avere margini "morbidi" (come in SVM) e un grado di tolleranza controllato dal parametro $C$. In particolare, la funzione di perdita deve essere $L \leq \xi$, consentendo un errore maggiore. Valori $C$ più alti producono una maggiore aggressività (con un conseguente rischio maggiore di destabilizzazione in presenza di rumore), mentre valori più bassi consentono un migliore adattamento. In effetti, questo tipo di algoritmi, quando si lavora online, deve far fronte alla presenza di campioni rumorosi (con etichette errate). È necessaria una buona robustezza, altrimenti cambiamenti troppo rapidi producono conseguenti tassi di classificazione errata più elevati.
+L'introduzione della variabile slack consente di avere margini \quotes{morbidi} (come in SVM) e un grado di tolleranza controllato dal parametro $C$. In particolare, la funzione di perdita deve essere $L \leq \xi$, consentendo un errore maggiore. Valori $C$ più alti producono una maggiore aggressività (con un conseguente rischio maggiore di destabilizzazione in presenza di rumore), mentre valori più bassi consentono un migliore adattamento. In effetti, questo tipo di algoritmi, quando si lavora online, deve far fronte alla presenza di campioni rumorosi (con etichette errate). È necessaria una buona robustezza, altrimenti cambiamenti troppo rapidi producono conseguenti tassi di classificazione errata più elevati.
 
 Dopo aver risolto entrambe le condizioni di aggiornamento, otteniamo la regola di aggiornamento:
 
@@ -744,7 +744,7 @@ L'idea è fornire all'utente un sistema già pre-addestrato che pian piano si ad
 
 Si vuole addestrare il Customized Sensitiveness Classifier con una multi-view che include sia l'embed (single-view) sia la valutazione del sensitiveness classifier (single-view). Abbiamo utilizzato in particolare la tecnica \textit{early integration}. 
 
-La "early integration" consiste nel concatenare le view singole cioè le caratteristiche associate all'embed e i risultati in probabilità ottenuti tramite il Topic-specific Sensitiveness Classifier; in questo modo ogni combinazione (concatenazione di due o più viste singole) rappresenta un campione nei set di dati. Quindi abbiamo ottenuto vettori da 514 elementi (512+2) dove i primi 512 elementi sono l'embed della frase e gli ultimi due sono la probabilità associata alla sensibilità negativa e la sensibilità positiva, rispettivamente.
+La \quotes{early integration} consiste nel concatenare le view singole cioè le caratteristiche associate all'embed e i risultati in probabilità ottenuti tramite il Topic-specific Sensitiveness Classifier; in questo modo ogni combinazione (concatenazione di due o più viste singole) rappresenta un campione nei set di dati. Quindi abbiamo ottenuto vettori da 514 elementi (512+2) dove i primi 512 elementi sono l'embed della frase e gli ultimi due sono la probabilità associata alla sensibilità negativa e la sensibilità positiva, rispettivamente.
 
 \begin{figure}[h]
     \centering
@@ -759,7 +759,7 @@ Abbiamo utilizzato i dataset {\tt ds200.csv} visti in Sezione~\ref{ssec:create_s
 I dataset sono stati suddivisi, con un approccio stratificato, in un 80\% per il training ed un 20\% per il testing utilizzando la funzione {\tt train\_test\_split} di scikit-learn per Python. Successivamente, il training set è stato oggetto di una 10-fold cross-validation con il metodo {\tt GridSearchCV} in cui abbiamo cercato di ottimizzare il parametro di aggressività $C$. Si osservi però che questo parametro è in realtà molto user-based, ragion per cui il miglior metodo per stimarlo potrebbe essere effettuando uno studio sugli utenti: è possibile che questi preferiscano un classificatore molto aggressivo o, al contrario, siano soddisfatti maggiormente con un apprendimento più lento e graduale. I valori di $C$ provati sono i seguenti: 0.001, 0.01, 0.1, 1, 10, 100. I risultati di questa fase possono essere visti in Tabella~\ref{tbl:testing_Customized}. Il miglior parametro è risultato essere per tutti i casi, $C=0.01$.
 
 \subsection{Testing}
-Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora "intonso", il test set, composto dal 20\% dei dati ds200.
+Una volta ottenuto il miglior parametro $C$ di aggressività per ciascun customized sensitiveness classifier procediamo con la fase di testing, in cui valutiamo le prestazioni del classificatore pre-addestrato su un set di dati ancora \quotes{intonso}, il test set, composto dal 20\% dei dati ds200.
 
 \begin{table}[h!t]
 \centering
