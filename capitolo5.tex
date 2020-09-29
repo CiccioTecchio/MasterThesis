@@ -1,4 +1,5 @@
 \chapter{Knoxly, un tool di privacy awareness}
+\label{ch:cap5}
 Una volta implementato il core basato su Intelligenza Artificiale, in questo capitolo parliamo di come è stato sviluppato ed aggiornato il tool Knoxly.
  
 Nella Sezione~\ref{sec:whoisKnoxly} sono stati spiegati il funzionamento, gli obiettivi e i limiti del progetto Knoxly, una estensione per Google Chrome volta a fornire privacy awareness agli utenti riguardo il contenuto dei messaggi che sono in procinto di pubblicare sul Web. Prima di questo lavoro Knoxly era in grado di segnalare all'utente la presenza di dati sensibili e/o personali presenti in un testo scritto in italiano o inglese basandosi su un analizzatore lessicale (quindi utilizzando una logica keyword-based). Ora Knoxly può contare su una analisi del testo migliore dato che adesso è dotato di tre moduli: (a) il \textit{Topic classifier} (Sez~\ref{sec:topicclass}) che è in grado di capire a quale fra cinque topic (politics, health, job, travel e general) appartiene un testo scritto in una tra 16 lingue (vedi Sezione~\ref{sec:use}), (b) il \textit{Sensitivity classifier} (Sezione~\ref{sec:sensclass}) che è in grado di comprendere quanto un testo sia sensibile o meno (sempre in 16 lingue) e (c) il \textit{Customized sensitivity classifier} (Sezione~\ref{sec:pres_sens_class}) che è in grado apprendere le preferenze degli utenti in fatto di privacy e regolare le segnalazioni di Knoxly di conseguenza.
@@ -71,7 +72,7 @@ In Figura~\ref{fig:uiKnoxly} viene mostrata la landing page una volta aperto il 
 Le icone scelte per fornire consapevolezza sono mostrate in Figura~\ref{fig:bollini}. Sono stati utilizzati i colori \textit{rosso} e \textit{giallo}, in quanto il colore rosso è il colore maggiormente utilizzato per definire un pericolo/rischio, mentre, il colore giallo è il colore maggiormente utilizzato per definire l'avviso\quotes{avviso}.
 \begin{figure}[h!t]
     \centering
-    \includegraphics[scale=0.7]{Figure/ui/bollini.png}
+    \includegraphics[scale=0.5]{Figure/ui/bollini.png}
     \caption{icone presenti in Knoxly}
     \label{fig:bollini}
 \end{figure}
@@ -83,17 +84,17 @@ La sezione \textbf{Statistics} (vedi Figura~\ref{fig:statKnoxly}) è dedicata al
 L'overall score non è altro che il calcolo online della media degli score di sensibilità ottenuti per ciascuna delle frasi che ha divulgato, con riferimento alle sole frasi classificate sensibili. Lo score $s \in [0..1]$ e viene rappresentato come un cerchio che si colora di rosso se l'overall score supera 0.68 altrimenti è mostrato in giallo. 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.7]{Figure/ui/statistics.png}
+    \includegraphics[scale=0.5]{Figure/ui/statistics.png}
     \caption{sezione statistics di Knoxly}
     \label{fig:statKnoxly}
 \end{figure}
 \FloatBarrier
 
-Infine nella sezione \textbf{About} (vedi Figura \ref{fig:about}) vengono riportate le informazioni riguardanti le metafore visuali adottate, con particolare focus sulle icone utilizzate per ciascun topic.
+Infine nella sezione \textbf{About} (vedi Figura \ref{fig:about}) vengono riportate le informazioni riguardanti le metafore visuali adottate, con particolare focus sulle icone utilizzate per ciascun topic. La sezione \textbf{About} è composta da una tabella avente 2 colonne e 10 righe nella colonna di sinistra chiamata \textit{Privacy awareness icon} sono presenti tutte le icone che possono essere mostrate all'utente durante un normale utilizzo di Knoxly. Nella colonna di destra invece viene mostrata una breve descrizione dell'icona, ovvero dice l'icona a che topic fa riferimento e che significato ha il colore associato all'icona.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.7]{Figure/ui/about.png}
+    \includegraphics[scale=0.5]{Figure/ui/about-2.png}
     \caption{sezione about di Knoxly}
     \label{fig:about}
 \end{figure}
